@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  order_id: 1
+  subscription_message: MyText
+  message_id: 1
+  frequency: 1
+  delivery_time: 2015-02-17 23:05:18
+  gift: false
+
+two:
+  order_id: 1
+  subscription_message: MyText
+  message_id: 1
+  frequency: 1
+  delivery_time: 2015-02-17 23:05:18
+  gift: false

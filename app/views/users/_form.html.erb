@@ -1,0 +1,98 @@
+<%= simple_form_for(@user) do |f| %>
+<div class="row">
+
+  <div class="large-6 large-centered small-9 small-centered columns">
+        <% if @user.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+              <ul>
+                <% @user.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+        <% end %>
+
+        <div class="field">
+          <%= f.label :name %><br>
+          <%= f.text_field :name %>
+        </div>
+        <div class="field">
+          <%= f.label :surname %><br>
+          <%= f.text_field :surname %>
+        </div>
+        <div class="field">
+          <%= f.label :phone %><br>
+          <%= f.text_field :phone %>
+        </div>
+        <!--<div class="field">-->
+          <%#= f.label :password %>
+             <!--<br>-->
+          <!--<%#= f.text_field :password %>-->
+        <!--</div>-->
+        <div class="field">
+          <%= f.label :email %><br>
+          <%= f.text_field :email %>
+        </div>
+        <div class="field">
+          <%= f.label :time_zone %><br>
+          <%= f.time_zone_select :time_zone %>
+        </div>
+
+  </div>
+
+  <div class="row">
+    <div class="large-6 large-centered small-9 small-centered  columns">
+      <hr>
+      <h5 class="text-center">Subscriptions</h5>
+
+      <div class="panel">
+      <%= f.simple_fields_for :subscriptions do |s| %>
+          <div class="field">
+            <%= s.label "duration" %><br>
+            <%= s.collection_radio_buttons :duration ,  [[30, '30 days'] ,[60, '60 days'],[120, '120 days']], :first, :last %>
+          </div>
+          <div class="field">
+            <%= s.label "delivery time" %><br>
+            <%= s.select :delivery_time , ["6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM"]%>
+          </div>
+            <div class="field">
+              <%= s.select :message_category , :collection => $message_categories , :input_html =>{ :onchange => "messages_load(this)" }%>
+            </div>
+          <div class="field">
+            <%= s.select :message_id , options_for_select(@msgs) %>
+          </div>
+       <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-6 large-centered small-9 small-centered text-center columns">
+      <div class="actions">
+        <%= f.submit :class => "button success radius "%>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<% end %>
+
+
+
+<script type="text/javascript">
+    function messages_load(category) {
+       //alert(category.value) ;
+        alert("hi")
+            $.ajax({
+                type: "GET",
+                url: "<%= get_messages_on_category_messages_path %>",
+                data: { 'line_item_id': line_item_id, 'promo_id': promo_id},
+                success: function (data) {
+                }
+            });
+
+    }
+</script>
