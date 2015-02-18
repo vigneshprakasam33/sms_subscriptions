@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150218085743) do
+ActiveRecord::Schema.define(version: 20150218101204) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20150218085743) do
     t.text     "subscription_message"
     t.integer  "message_id"
     t.integer  "duration"
-    t.datetime "delivery_time"
+    t.string   "delivery_time"
     t.boolean  "gift"
     t.datetime "created_at"
     t.datetime "updated_at"

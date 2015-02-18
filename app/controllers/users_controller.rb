@@ -17,7 +17,6 @@ class UsersController < ApplicationController
     default_category = Category.find_by_name("Business")
     @user = User.new
     s = @user.subscriptions.build(:subscription_message => "hello" , :category_id => default_category.id)
-    @msgs = Message.where(:category_id => default_category.id).pluck(:content,:id)
   end
 
   # GET /users/1/edit
@@ -72,6 +71,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :surname, :phone, :password, :email, :time_zone)
+      ActionController::Parameters.permit_all_parameters = true
+      params.require(:user)#.permit(:name, :surname, :phone, :password, :email, :time_zone)
     end
 end
