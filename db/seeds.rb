@@ -6,9 +6,56 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 Message.delete_all
+Category.delete_all
 
-$message_categories.each do |k,v|
-Message.create(:content => k + " 1" , :category => v)
-Message.create(:content => k + " 2" , :category => v)
-Message.create(:content => k + " 3" , :category => v)
-end
+b = Category.create(:name => "Business")
+s = Category.create(:name => "Self Help")
+h = Category.create(:name => "Health")
+
+Message.create([
+                   {
+                       :content => "Business 1",
+                       :category_id => b.id
+                   },
+                   {
+                       :content => "Business 2",
+                       :category_id => b.id
+                   },
+                   {
+                       :content => "Business 3",
+                       :category_id => b.id
+                   }
+               ]
+)
+
+Message.create([
+                   {
+                       :content => "Self Help 1",
+                       :category_id => s.id
+                   },
+                   {
+                       :content => "Self Help 2",
+                       :category_id => s.id
+                   },
+                   {
+                       :content => "Self Help 3",
+                       :category_id => s.id
+                   }
+               ]
+)
+
+Message.create([
+                   {
+                       :content => "Health 1",
+                       :category_id => h.id
+                   },
+                   {
+                       :content => "Health 2",
+                       :category_id => h.id
+                   },
+                   {
+                       :content => "Health 3",
+                       :category_id => h.id
+                   }
+               ]
+)

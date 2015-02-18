@@ -14,9 +14,10 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
+    default_category = Category.find_by_name("Business")
     @user = User.new
-    s = @user.subscriptions.build(:subscription_message => "hello" , :message_category => "self_help")
-    @msgs = Message.where(:category => "self_help").pluck(:content,:id)
+    s = @user.subscriptions.build(:subscription_message => "hello" , :category_id => default_category.id)
+    @msgs = Message.where(:category_id => default_category.id).pluck(:content,:id)
   end
 
   # GET /users/1/edit

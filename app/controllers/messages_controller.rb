@@ -23,7 +23,8 @@ class MessagesController < ApplicationController
 
 
   def get_messages_on_category
-
+    @msgs = Category.find_by_id(params[:category_id]).messages
+    @sub = params[:subscription_id]
   end
 
   # POST /messages
@@ -67,13 +68,13 @@ class MessagesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_message
-      @message = Message.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_message
+    @message = Message.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def message_params
-      params.require(:message).permit(:content, :category)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def message_params
+    params.require(:message).permit(:content, :category)
+  end
 end

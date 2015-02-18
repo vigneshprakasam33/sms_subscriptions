@@ -48,7 +48,9 @@
       <h5 class="text-center">Subscriptions</h5>
 
       <div class="panel">
-      <%= f.simple_fields_for :subscriptions do |s| %>
+        <% sub_counter = 0  %>
+       <% @user.subscriptions.each do |sub| %>
+      <%= f.simple_fields_for :subscriptions , sub do |s| %>
           <div class="field">
             <%= s.label "duration" %><br>
             <%= s.collection_radio_buttons :duration ,  [[30, '30 days'] ,[60, '60 days'],[120, '120 days']], :first, :last %>
@@ -58,10 +60,10 @@
             <%= s.select :delivery_time , ["6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM"]%>
           </div>
             <div class="field">
-              <%= s.select :message_category , :collection => $message_categories , :input_html =>{ :onchange => "messages_load(this)" }%>
+              <%= s.association :category , :input_html =>{ :onchange => "messages_load(this, '#{sub_counter}')" }%>
             </div>
           <div class="field">
-            <%= s.select :message_id , options_for_select(@msgs) %>
+            <%= s.select :message_id , options_for_select(@msgs) , :input_html => { :id => "messages_select_#{sub_counter}" } %>
           </div>
        <% end %>
       </div>
@@ -79,17 +81,19 @@
 
 </div>
 <% end %>
+        <% sub_counter += 1   %>
+<% end %>
 
 
 
 <script type="text/javascript">
-    function messages_load(category) {
-       //alert(category.value) ;
-        alert("hi")
+    function messages_load(category , subscription) {
+       //alert(category.id+ " " +category.value) ;
+       // alert("hi")
             $.ajax({
                 type: "GET",
                 url: "<%= get_messages_on_category_messages_path %>",
-                data: { 'line_item_id': line_item_id, 'promo_id': promo_id},
+                data: { 'category_id': category.value, 'subscription_id': subscription},
                 success: function (data) {
                 }
             });
