@@ -63,7 +63,7 @@
               <%= s.association :category , :input_html =>{ :onchange => "messages_load(this, '#{sub_counter}')" }%>
             </div>
           <div class="field">
-            <%= s.select :message_id , options_for_select(Message.where(:category_id => sub.category_id).pluck(:content,:id) , :selected => sub.message.id) , :input_html => { :id => "messages_select_#{sub_counter}" } %>
+            <%= s.select :message_id , options_for_select(Message.where(:category_id => sub.category_id).pluck(:content,:id) , :selected => selected_message(sub)) , :input_html => { :id => "messages_select_#{sub_counter}" } %>
           </div>
        <% end %>
       </div>
