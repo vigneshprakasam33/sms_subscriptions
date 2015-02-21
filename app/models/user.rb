@@ -1,6 +1,10 @@
 class User < ActiveRecord::Base
   has_many :subscriptions
   accepts_nested_attributes_for :subscriptions
+  attr_accessor :terms
+
+  validates_presence_of :name , :surname , :subscriptions , :phone
+  validates_uniqueness_of :phone
 
   after_update :time_zone_updated , :if => (:time_zone_changed?)
   after_update :time_zone_updated , :if => (:phone_changed?)

@@ -15,8 +15,8 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     default_category = Category.find_by_name("Business")
-    @user = User.new
-    s = @user.subscriptions.build(:subscription_message => "hello" , :category_id => default_category.id)
+    @user = User.new(:time_zone => "Stockholm")
+    s = @user.subscriptions.build(:subscription_message => "hello" , :duration => 30 , :category_id => default_category.id)
   end
 
   # GET /users/1/edit
