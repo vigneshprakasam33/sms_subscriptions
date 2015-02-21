@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  subscription_id: 1
+  execution_time: 2015-02-20 14:24:11
+  delayed_job_id: 1
+  status: MyString
+  message: MyString
+  recipient_number: MyString
+
+two:
+  subscription_id: 1
+  execution_time: 2015-02-20 14:24:11
+  delayed_job_id: 1
+  status: MyString
+  message: MyString
+  recipient_number: MyString
