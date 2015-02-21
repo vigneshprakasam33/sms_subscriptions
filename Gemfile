@@ -84,6 +84,8 @@ gem 'valid_email',  require: ['valid_email/all_with_extensions']
 
 gem 'delayed_job_active_record'
 
+gem "delayed_job_web"
+
 gem 'daemons'
 
 gem 'bitly'
