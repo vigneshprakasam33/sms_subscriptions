@@ -11,7 +11,9 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      execute :touch, release_path.join('tmp/restart.txt')
+      execute 'cd /apps/sms/current; RAILS_ENV=production bundle exec rake assets:precompile'
+      execute '/etc/init.d/unicorn_sms restart'
+
     end
   end
 
