@@ -80,6 +80,8 @@
                     <%= s.association :category,  :include_blank => false, :input_html => {:onchange => "messages_load(this, '#{sub_counter}')"} %>
                   </div>
                   <div class="field">
+                    <%= s.label "Message" %>
+                    <br>
                     <%= s.select :message_id, options_for_select(Message.where(:category_id => sub.category_id).pluck(:content, :id), :selected => selected_message(sub) ), :input_html => {:id => "messages_select_#{sub_counter}"} %>
                   </div>
               <% end %>
@@ -105,7 +107,7 @@
               <div class="field">
                 <%= f.label :terms do %>
                     <%= f.check_box :terms  ,:onclick => "enable_buy_btn(this)"%>
-                    By signing up , you agree to accept the <%= link_to 'terms and conditions', "#terms" %>.
+                    By signing up , you agree to accept the <%= link_to 'terms and conditions', "#terms" , "data-reveal-id" => "terms_modal" %>.
                 <% end %>
                 <%#= f.input :terms , as: :boolean , :label => "By signing up , you agree to accept the following terms and conditions" %>
               </div>
@@ -124,7 +126,12 @@
 
 <% end %>
 
+<!--Terms-->
+<div id="terms_modal" class="reveal-modal" data-reveal>
+  <h4 class="text-center">Terms and conditions</h4>
 
+  <a class="close-reveal-modal">&#215;</a>
+</div>
 
 <script type="text/javascript">
     function messages_load(category, subscription) {
