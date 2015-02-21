@@ -89,10 +89,13 @@ class Subscription < ActiveRecord::Base
   def send_text_job(s, z, j)
 
     #PERFORM TASK
-    todays_time = Time.now.in_time_zone(z)
-    f = File.new("/Volumes/Media/test_#{todays_time.to_s.gsub(' ' ,'_')}.txt","a")
-    f.write( s.subscription_message)
-    f.close
+    #todays_time = Time.now.in_time_zone(z)
+    #f = File.new("/Volumes/Media/test_#{todays_time.to_s.gsub(' ' ,'_')}.txt","a")
+    #f.write( s.subscription_message)
+    #f.close
+
+    #pushover
+    RestClient.post "https://api.pushover.net/1/messages.json" , :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx" , :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x" , :device => "gt-i9300" , :title => "Daily Dose" , :message => "#{s.subscription_message}"
 
     #account_sid = 'AC464e95aa436faa83c989a5140d8a0b66'
     #auth_token = 'a49866d0a744d8642da934997ce71f78'
@@ -111,11 +114,11 @@ class Subscription < ActiveRecord::Base
     if (s.messages_count.to_i < s.duration.to_i)  and s.status == "active"
       todays_time = Time.now.in_time_zone(z)
       #enqueue next
-      if Rails.env == "production"
-        dtime = todays_time + 1.day
-      else
+      #if Rails.env == "production"
+      #  dtime = todays_time + 1.day
+      #else
         dtime = todays_time + 1.minute
-      end
+      #end
 
       new_j = Job.create(:execution_time => dtime, :status => "enqueued", :message => s.subscription_message, :recipient_number => s.user.phone)
       dj = s.delay(:run_at => dtime).send_text_job(s, z, new_j)

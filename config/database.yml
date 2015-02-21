@@ -15,15 +15,6 @@ production:
   database: sms_db
   pool: 5
   username: root
-  password:
+  password: kothanur54
   host: localhost
 
-test:
-  adapter: mysql2
-  encoding: utf8
-  reconnect: true
-  database: sms_db
-  pool: 5
-  username: root
-  password: 123456
-  host: localhost
