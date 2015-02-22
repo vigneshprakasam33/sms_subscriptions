@@ -70,15 +70,17 @@ class Subscription < ActiveRecord::Base
     todays_time = Time.now.in_time_zone(user_time_zone)
 
     #check if today delivery is possible
-    todays_delivery_time = Time.new(todays_time.year, todays_time.month, todays_time.day, self.delivery_time_hours, 0, 0, Time.zone_offset(user_time_zone))
+    todays_delivery_time = Time.new(todays_time.year, todays_time.month, todays_time.day, self.delivery_time_hours, 0, 0, Time.now.in_time_zone(user_time_zone).utc_offset)
     enqueue_day = ((todays_time - todays_delivery_time) > 0) ? todays_time.tomorrow.day : todays_time.day
 
     #delivery time
-    dtime = Time.new(todays_time.year, todays_time.month, enqueue_day, self.delivery_time_hours, 0, 0, Time.zone_offset(user_time_zone))
+    dtime = Time.new(todays_time.year, todays_time.month, enqueue_day, self.delivery_time_hours, 0, 0, Time.now.in_time_zone(user_time_zone).utc_offset)
     #dtime =  Time.new(todays_time.year, todays_time.month, enqueue_day , 0 , 11 , 0, Time.zone_offset(user_time_zone))
 
-    j = Job.create(:execution_time => dtime, :status => "enqueued", :message => self.subscription_message, :recipient_number => self.user.phone)
-    dj = self.delay(:run_at => dtime).send_text_job(self, user_time_zone, j)
+    logger.debug "The delivery time=======>" + dtime.to_s
+
+    j = Job.create(:execution_time => dtime.utc, :status => "enqueued", :message => self.subscription_message, :recipient_number => self.user.phone)
+    dj = self.delay(:run_at => dtime.utc).send_text_job(self, user_time_zone, j)
     j.delayed_job_id = dj.id
     j.save
 
@@ -120,8 +122,8 @@ class Subscription < ActiveRecord::Base
         dtime = todays_time + 1.minute
       #end
 
-      new_j = Job.create(:execution_time => dtime, :status => "enqueued", :message => s.subscription_message, :recipient_number => s.user.phone)
-      dj = s.delay(:run_at => dtime).send_text_job(s, z, new_j)
+      new_j = Job.create(:execution_time => dtime.utc, :status => "enqueued", :message => s.subscription_message, :recipient_number => s.user.phone)
+      dj = s.delay(:run_at => dtime.utc).send_text_job(s, z, new_j)
       new_j.delayed_job_id = dj.id
       new_j.save
 
