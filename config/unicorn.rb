@@ -28,7 +28,7 @@ before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.connection.disconnect!
   end
-  @delayed_job_pid ||= spawn('scripts/delayed_job stop ; scripts/delayed_job start')
+  @delayed_job_pid ||= spawn('/apps/sms/current/scripts/delayed_job stop ; /apps/sms/current/scripts/delayed_job start')
 end
 
 after_fork do |server, worker|

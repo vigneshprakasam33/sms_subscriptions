@@ -12,8 +12,9 @@ namespace :deploy do
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       execute 'cd /apps/sms/current; RAILS_ENV=production bundle exec rake assets:precompile'
-      execute '/etc/init.d/unicorn_sms restart'
-
+      execute '/etc/init.d/unicorn_sms stop'
+      execute 'sleep 5'
+      execute '/etc/init.d/unicorn_sms start'
     end
   end
 
