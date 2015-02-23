@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :require_login, :only => [:new , :create , :signin , :login , :logout]
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update, :destroy , :show]
 
   def login
     if request.post?
