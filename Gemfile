@@ -89,3 +89,5 @@ gem "delayed_job_web"
 gem 'daemons'
 
 gem 'bitly'
+
+gem 'cancancan', '~> 1.10'

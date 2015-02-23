@@ -11,11 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150218101204) do
+ActiveRecord::Schema.define(version: 20150223045244) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
     t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "delayed_jobs", force: true do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "jobs", force: true do |t|
+    t.integer  "subscription_id"
+    t.datetime "execution_time"
+    t.integer  "delayed_job_id"
+    t.string   "status"
+    t.string   "message"
+    t.string   "recipient_number"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -46,6 +73,8 @@ ActiveRecord::Schema.define(version: 20150218101204) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.integer  "category_id"
+    t.integer  "messages_count",       default: 0
+    t.string   "status",               default: "active"
   end
 
   create_table "users", force: true do |t|
@@ -57,6 +86,8 @@ ActiveRecord::Schema.define(version: 20150218101204) do
     t.string   "time_zone"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "gift",       default: false
+    t.uuid     "uuid"
   end
 
 end

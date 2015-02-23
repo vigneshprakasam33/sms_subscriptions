@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+  <title><%= content_for?(:title) ? yield(:title) : "Sms subscriptions" %></title>
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "vendor/modernizr" %>
+  <%= csrf_meta_tags %>
+</head>
+
+
+<body class="login_body" style="background-image: url('<%= asset_path 'body-bg.png' %>')">
+<div class="row">
+  <div class="small-6 large-centered columns ">
+    <div id="login-container">
+      <div id="logo">
+        <!--<sup><i class=""></i></sup>-->
+        <%= image_tag "aa_64_original.png" , :class => "signin_page_logo" %>
+      </div>
+      <div id="login">
+        <h5>Please sign in to get access.</h5>
+        <%= form_for(:user, :url => {:controller => 'users', :action => 'login'}, :class => 'form-signin') do |f| %>
+            <form role="form">
+              <fieldset>
+                <div class="form-group">
+                  <label for="login-username">Username</label>
+                  <%= f.text_field :login, :class => 'form-control', :size => '23', :placeholder => 'Username', :autofocus => 'autofocus' %>
+
+                </div>
+                <div class="form-group">
+                  <label for="login-password">Password</label>
+                  <%= f.text_field :password, :class => 'form-control', :placeholder => 'Password', :size => "23", :type => 'password' %>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                  </label>
+                </div>
+                <div class="form-group">
+                  <%= f.submit 'Sign in', :class => "button blue radius expand" %>
+                </div>
+
+                <!-- Change this to a button or input when using this as a form -->
+              </fieldset>
+            </form>
+            <% flash.each do |name, msg| %>
+                <div data-alert class="alert-box rounded  <%= name == :notice ? "success" : "alert" %>">
+                  <a href="#" class="close">&times;</a>
+                  <%= msg %>
+                </div>
+            <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<%= javascript_include_tag "application" %>
+</body>
+</html>
