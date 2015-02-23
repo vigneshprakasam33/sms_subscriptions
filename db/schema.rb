@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150223045244) do
+ActiveRecord::Schema.define(version: 20150223144928) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20150223045244) do
     t.integer  "category_id"
     t.integer  "messages_count",       default: 0
     t.string   "status",               default: "active"
+    t.boolean  "mute",                 default: false
   end
 
   create_table "users", force: true do |t|

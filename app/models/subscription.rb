@@ -5,17 +5,28 @@ class Subscription < ActiveRecord::Base
   belongs_to :category
   has_many :jobs
 
-  attr_accessor :update_flag
+  attr_accessor :update_flag, :update_delivery_time_flag, :update_mute_flag
 
   after_create :subscription_message_fill
   after_update :subscription_message_updated, :if => (:message_id_changed?)
   after_update :delivery_time_updated, :if => (:delivery_time_changed?)
+  after_update :mute_updated, :if => (:mute_changed?)
   after_create :enqueue_first_job
 
+  def mute_updated
+    if self.update_mute_flag.blank?
+      logger.debug "---------mute updated----------------"
+      self.update_mute_flag = true
+      self.save
+      delete_enqueued_jobs
+      enqueue_first_job
+    end
+  end
 
   def delivery_time_updated
-    if self.update_flag.blank?
-      self.update_flag = true
+    if self.update_delivery_time_flag.blank?
+      logger.debug "---------delivery time updated----------------"
+      self.update_delivery_time_flag = true
       self.save
       delete_enqueued_jobs
       enqueue_first_job
@@ -90,36 +101,45 @@ class Subscription < ActiveRecord::Base
 
   def send_text_job(s, z, j)
 
-    #PERFORM TASK
-    #todays_time = Time.now.in_time_zone(z)
-    #f = File.new("/Volumes/Media/test_#{todays_time.to_s.gsub(' ' ,'_')}.txt","a")
-    #f.write( s.subscription_message)
-    #f.close
+    #muted day is considered as a subscription day
+    if s.mute.blank?
+      #PERFORM TASK
+      #todays_time = Time.now.in_time_zone(z)
+      #f = File.new("/Volumes/Media/test_#{todays_time.to_s.gsub(' ' ,'_')}.txt","a")
+      #f.write( s.subscription_message)
+      #f.close
 
-    #pushover
-    RestClient.post "https://api.pushover.net/1/messages.json" , :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx" , :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x" , :device => "gt-i9300" , :title => "Daily Dose" , :message => "#{s.subscription_message}"
+      #pushover
+      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{s.subscription_message}"
+
+      #JOB STATUS UPDATE
+      j.reload
+      j.update(:status => "completed")
+
+    else
+      j.reload
+      j.update(:status => "muted")
+
+    end
 
     #account_sid = 'AC464e95aa436faa83c989a5140d8a0b66'
     #auth_token = 'a49866d0a744d8642da934997ce71f78'
     #client =Twilio::REST::Client.new account_sid, auth_token
     #client.account.messages.create(:from => "+441172001588", :body => s.subscription_message, :to => s.user.phone)
 
-    #JOB STATUS UPDATE
-    j.reload
-    j.update(:status => "completed")
 
     #INCREASE COUNTER
     s.update(:messages_count => s.messages_count + 1)
     logger.debug "========messages ====>" + s.messages_count.to_s
 
     #NEXT JOB ENQUEUE
-    if (s.messages_count.to_i < s.duration.to_i)  and s.status == "active"
+    if (s.messages_count.to_i < s.duration.to_i) and s.status == "active"
       todays_time = Time.now.in_time_zone(z)
       #enqueue next
       #if Rails.env == "production"
       #  dtime = todays_time + 1.day
       #else
-        dtime = todays_time + 1.minute
+      dtime = todays_time + 1.minute
       #end
 
       new_j = Job.create(:execution_time => dtime.utc, :status => "enqueued", :message => s.subscription_message, :recipient_number => s.user.phone)

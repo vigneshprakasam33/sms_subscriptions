@@ -1,7 +1,8 @@
 <html lang="en">
 <head>
-  <title><%= content_for?(:title) ? yield(:title) : "Sms subscriptions" %></title>
+  <title><%= content_for?(:title) ? yield(:title) : "SMS subscriptions" %></title>
   <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
   <%= javascript_include_tag "vendor/modernizr" %>
   <%= csrf_meta_tags %>
 </head>
@@ -9,7 +10,7 @@
 
 <body class="login_body" style="background-image: url('<%= asset_path 'body-bg.png' %>')">
 <div class="row">
-  <div class="small-6 large-centered columns ">
+  <div class="small-10 large-centered columns">
     <div id="login-container">
       <div id="logo">
         <!--<sup><i class=""></i></sup>-->
@@ -52,6 +53,5 @@
     </div>
   </div>
 </div>
-<%= javascript_include_tag "application" %>
 </body>
 </html>
