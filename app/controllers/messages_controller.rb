@@ -1,5 +1,7 @@
 class MessagesController < ApplicationController
+  skip_before_filter :require_login, :only => [:get_messages_on_category]
   before_action :set_message, only: [:show, :edit, :update, :destroy]
+
 
   # GET /messages
   # GET /messages.json
