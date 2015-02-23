@@ -25,19 +25,25 @@
     <div class="top-bar-section">
       <ul class="left first-nav">
         <li ><%= link_to 'Subscribe', new_user_path %></li>
-
       </ul>
-      <!--<ul class="right">-->
-        <!--<li class="has-dropdown">-->
-          <!--<a href="#"><i><%#= current_user.first_name + " " + current_user.last_name %></i></a>-->
-          <!--<ul class="dropdown">-->
-            <!--<li><a href="#" data-reveal-id="account_modal">Account</a></li>-->
-            <!--<li>-->
-              <!--<a href=" <%#= logout_users_path %>">Logout</a>-->
-            <!--</li>-->
-          <!--</ul>-->
-        <!--</li>-->
-      <!--</ul>-->
+      <ul class="right">
+        <li class="has-dropdown">
+          <% if current_user  %>
+          <a href="#">Welcome<i><%= " " + current_user.name + " " + current_user.surname %></i></a>
+          <% else  %>
+              <a href="#"> Welcome<i><%= " Guest" %></i></a>
+          <%end %>
+          <ul class="dropdown">
+            <li>
+              <% if current_user  %>
+              <a href=" <%= logout_users_path %>">Logout</a>
+               <% else  %>
+              <a href=" <%= signin_path %>">Signin</a>
+              <%end %>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </nav>
 

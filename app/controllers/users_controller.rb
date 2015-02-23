@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_filter :require_login, :only => [:new , :create , :signin , :login]
+  skip_before_filter :require_login, :only => [:new , :create , :signin , :login , :logout]
   before_action :set_user, only: [:edit, :update, :destroy]
 
   def login
@@ -14,6 +14,14 @@ class UsersController < ApplicationController
     else
       redirect_to signin_path
     end
+  end
+
+  def logout
+    session[:is_admin] = nil
+    session[:uid] = nil
+    session.clear
+    flash[:message] = 'Logged out'
+    redirect_to signin_path
   end
 
   def signin
