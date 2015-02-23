@@ -11,6 +11,10 @@ class User < ActiveRecord::Base
   after_update :time_zone_updated , :if => (:time_zone_changed?)
   after_update :time_zone_updated , :if => (:phone_changed?)
 
+  def phone=(phone)
+    write_attribute(:phone, phone.gsub(/[^0-9\+]/, ''))
+  end
+
   def welcome_message
     logger.debug "sending welcome message ====================>"
     welcome_msg = "Subscription activated. To mute or change delivery time, login at http://realmobile.se/signin . Your user name is #{self.phone} and password is #{self.password}"
@@ -28,7 +32,7 @@ class User < ActiveRecord::Base
   end
 
   def set_uuid
-    self.uuid = SecureRandom.uuid
+    self.uuid = SecureRandom.uuid.gsub(/[^0-9]/, '')
     self.password = SecureRandom.uuid.last(8)
   end
 
