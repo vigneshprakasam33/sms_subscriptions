@@ -1,3 +1,4 @@
+//encoding: utf-8
 //data table initializations
 $(document).ready(function(){
     $("#jobs_table").dataTable({
