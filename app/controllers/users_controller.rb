@@ -28,6 +28,10 @@ class UsersController < ApplicationController
     render "users/signin", :layout => false
   end
 
+  def jobs
+    @jobs = Job.where(:subscription_id => current_user.subscriptions.pluck(:id))
+  end
+
   # GET /users
   # GET /users.json
   def index

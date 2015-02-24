@@ -91,3 +91,5 @@ gem 'daemons'
 gem 'bitly'
 
 gem 'cancancan', '~> 1.10'
+
+gem 'jquery-datatables-rails'

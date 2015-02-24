@@ -1,0 +1,35 @@
+<br>
+<br>
+<div class="row">
+
+  <div class="large-centered small-centered columns">
+    <div class="panel text-center">
+      <h3>Jobs</h3>
+    </div>
+    <table style="width:100%" id="jobs_table">
+      <thead>
+      <tr>
+        <th>Execution time</th>
+        <th>Status</th>
+        <th>Message</th>
+        <th>Recipient</th>
+        <!--<th></th>-->
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <% @jobs.each do |job| %>
+          <tr>
+            <td><%= job.execution_time %></td>
+            <td><%= job.status %></td>
+            <td><%= job.message %></td>
+            <td><%= job.recipient_number %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <br>
+  </div>
+</div>
