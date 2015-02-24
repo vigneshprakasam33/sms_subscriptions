@@ -4,14 +4,24 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :subscriptions , allow_destroy: true
   attr_accessor :terms
 
-  validates_presence_of :name, :surname, :phone , :subscriptions
+  validates_presence_of :name, :surname, :phone
   validates_uniqueness_of :phone
+  validate :validate_subscriptions_count
 
   before_create :set_uuid
   after_create :welcome_message
   after_update :time_zone_updated, :if => (:time_zone_changed?)
   after_update :time_zone_updated, :if => (:phone_changed?)
 
+
+  def validate_subscriptions_count
+    if self.subscriptions.size < 1
+      errors.add(:subscriptions, ":Need 1 or more Subscription")
+    elsif self.subscriptions.size > 3
+      errors.add(:subscriptions, ":We currently support a maximum of 3 subscriptions per number")
+    end
+  end
+  
   def phone=(phone)
     write_attribute(:phone, phone.gsub(/[^0-9\+]/, ''))
   end
