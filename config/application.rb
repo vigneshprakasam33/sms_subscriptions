@@ -22,7 +22,5 @@ module SmsSubscriptions
     config.assets.precompile += %w( vendor/modernizr )
     config.assets.paths << Rails.root.join('app', 'vendor', 'assets', 'images', 'fonts')
 
-    config.autoload_paths += %W(#{config.root}/lib)
-    config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
 end
