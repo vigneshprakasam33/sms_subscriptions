@@ -1,4 +1,12 @@
-<%= form_for(@message) do |f| %>
+<br>
+<br>
+<div class="row">
+
+  <div class="large-centered small-centered columns">
+    <div class="panel text-center">
+      <h3>New Message</h3>
+    </div>
+<%= simple_form_for(@message) do |f| %>
   <% if @message.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@message.errors.count, "error") %> prohibited this message from being saved:</h2>
@@ -10,16 +18,17 @@
       </ul>
     </div>
   <% end %>
+        <div class="field">
+          <%= f.association :category %>
+        </div>
 
-  <div class="field">
+        <div class="field">
     <%= f.label :content %><br>
     <%= f.text_area :content %>
   </div>
-  <div class="field">
-    <%= f.label :category %><br>
-    <%= f.association :category %>
-  </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit :class => "button success radius"%>
   </div>
 <% end %>
+  </div>
+</div>
