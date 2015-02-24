@@ -8,6 +8,12 @@
               <%= notice %>
             </div>
         <% end %>
+        <% if  flash[:error] %>
+            <div data-alert class="alert-box rounded alert">
+              <a href="#" class="close">&times;</a>
+              <%=  flash[:error] %>
+            </div>
+        <% end %>
         <% if @user.errors.any? %>
             <div id="error_explanation">
               <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>

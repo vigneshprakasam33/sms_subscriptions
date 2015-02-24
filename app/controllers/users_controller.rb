@@ -1,15 +1,15 @@
 class UsersController < ApplicationController
-  skip_before_filter :require_login, :only => [:new , :create , :signin , :login , :logout]
-  before_action :set_user, only: [:edit, :update, :destroy , :show]
+  skip_before_filter :require_login, :only => [:new, :create, :signin, :login, :logout]
+  before_action :set_user, only: [:edit, :update, :destroy, :show]
 
   def login
     if request.post?
       @user, res = User.login(params[:user][:login], params[:user][:password])
       if @user and res == :success
         session[:uid] = @user.uuid
-        redirect_to edit_user_path(:id => @user.uuid )
+        redirect_to edit_user_path(:id => @user.uuid)
       else
-        redirect_to signin_path
+        redirect_to signin_path , :alert => "Invalid username or password"
       end
     else
       redirect_to signin_path
@@ -29,13 +29,15 @@ class UsersController < ApplicationController
   end
 
   def jobs
-    @jobs = Job.where(:subscription_id => current_user.subscriptions.pluck(:id))
+    @jobs = Job.all
+    authorize! :update, @jobs
   end
 
   # GET /users
   # GET /users.json
   def index
     @users = User.all
+    authorize! :update, @users
   end
 
   # GET /users/1
@@ -61,7 +63,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to new_user_path , notice: 'Your SMS Subscription has been activated.' }
+        format.html { redirect_to new_user_path, notice: 'Your SMS Subscription has been activated.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
         format.html { render action: 'new' }
@@ -73,6 +75,10 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    #only admin or same user can update user object
+    if current_user.is_admin.blank? and current_user.uuid != @user.uuid
+      raise CanCan::AccessDenied
+    end
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to edit_user_path(:id => @user.uuid), notice: 'Settings successfully updated.' }

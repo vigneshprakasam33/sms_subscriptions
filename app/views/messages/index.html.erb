@@ -1,6 +1,13 @@
-<h1>Listing messages</h1>
+<br>
+<br>
+<div class="row">
 
-<table>
+  <div class="large-centered small-centered columns">
+    <div class="panel text-center">
+      <h3>Messages</h3>
+    </div>
+
+    <table style="width:100%" id="messages_table">
   <thead>
     <tr>
       <th>Content</th>
@@ -15,7 +22,7 @@
     <% @messages.each do |message| %>
       <tr>
         <td><%= message.content %></td>
-        <td><%= message.category %></td>
+        <td><%= message.category.name %></td>
         <td><%= link_to 'Show', message %></td>
         <td><%= link_to 'Edit', edit_message_path(message) %></td>
         <td><%= link_to 'Destroy', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -26,4 +33,6 @@
 
 <br>
 
-<%= link_to 'New Message', new_message_path %>
+<%= link_to 'New Message', new_message_path  , :class => "button success radius"%>
+  </div>
+</div>

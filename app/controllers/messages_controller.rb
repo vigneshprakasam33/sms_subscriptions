@@ -7,6 +7,7 @@ class MessagesController < ApplicationController
   # GET /messages.json
   def index
     @messages = Message.all
+    authorize! :update, @messages
   end
 
   # GET /messages/1
@@ -17,6 +18,7 @@ class MessagesController < ApplicationController
   # GET /messages/new
   def new
     @message = Message.new
+    authorize! :update, @message
   end
 
   # GET /messages/1/edit
@@ -33,6 +35,7 @@ class MessagesController < ApplicationController
   # POST /messages.json
   def create
     @message = Message.new(message_params)
+    authorize! :update, @message
 
     respond_to do |format|
       if @message.save
@@ -48,6 +51,7 @@ class MessagesController < ApplicationController
   # PATCH/PUT /messages/1
   # PATCH/PUT /messages/1.json
   def update
+    authorize! :update, @message
     respond_to do |format|
       if @message.update(message_params)
         format.html { redirect_to @message, notice: 'Message was successfully updated.' }

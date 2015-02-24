@@ -32,8 +32,15 @@
     <ul class="left first-nav">
       <% if current_user %>
           <li><%= link_to 'Dashboard', edit_user_path(:id => current_user.uuid) %></li>
+          <% if can? :update , User  %>
           <li><%= link_to 'Users', users_path %></li>
+          <% end%>
+          <% if can? :update , Job  %>
           <li><%= link_to 'Jobs', jobs_path %></li>
+          <% end%>
+          <% if can? :update , Message  %>
+              <li><%= link_to 'Messages', messages_path %></li>
+          <% end%>
       <% end %>
       <li><%= link_to 'Subscribe', new_user_path %></li>
     </ul>

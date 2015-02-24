@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150223144928) do
+ActiveRecord::Schema.define(version: 20150224081021) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20150223144928) do
     t.datetime "updated_at"
     t.boolean  "gift",       default: false
     t.uuid     "uuid"
+    t.boolean  "is_admin",   default: false
   end
 
 end

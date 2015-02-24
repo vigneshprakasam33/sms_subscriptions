@@ -13,8 +13,9 @@ class Subscription < ActiveRecord::Base
   after_update :mute_updated, :if => (:mute_changed?)
   after_create :enqueue_first_job
 
+
   def mute_updated
-    if self.update_mute_flag.blank?
+    if self.update_mute_flag.blank? and self.created_at != self.updated_at
       logger.debug "---------mute updated----------------"
       self.update_mute_flag = true
       self.save
@@ -24,7 +25,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def delivery_time_updated
-    if self.update_delivery_time_flag.blank?
+    if self.update_delivery_time_flag.blank? and self.created_at != self.updated_at
       logger.debug "---------delivery time updated----------------"
       self.update_delivery_time_flag = true
       self.save
@@ -40,7 +41,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def subscription_message_updated
-    if self.update_flag.blank?
+    if self.update_flag.blank? and self.created_at != self.updated_at
       self.update_flag = true
       self.save
       logger.debug "----Subscription message has been changed----"

@@ -5,6 +5,11 @@ class ApplicationController < ActionController::Base
   before_filter :require_login
   helper_method :current_user
 
+  rescue_from CanCan::AccessDenied do |exception|
+    flash[:error] = "Access denied."
+    redirect_to root_url
+  end
+
   def require_login
     go_get_login unless session[:uid]
   end

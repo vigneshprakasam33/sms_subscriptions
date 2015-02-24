@@ -5,6 +5,7 @@ class SubscriptionsController < ApplicationController
   # GET /subscriptions.json
   def index
     @subscriptions = Subscription.all
+    authorize! :update, @subscriptions
   end
 
   # GET /subscriptions/1
@@ -15,10 +16,12 @@ class SubscriptionsController < ApplicationController
   # GET /subscriptions/new
   def new
     @subscription = Subscription.new
+    authorize! :update, @subscription
   end
 
   # GET /subscriptions/1/edit
   def edit
+    authorize! :update, @subscription
   end
 
   # POST /subscriptions
