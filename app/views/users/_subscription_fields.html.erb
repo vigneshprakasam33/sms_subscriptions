@@ -1,0 +1,48 @@
+<fieldset>
+  <div class="right">
+  <% if  @user.new_record?%>
+      <%= f.hidden_field :_destroy %>
+      <%= link_to_remove_fields "X", f %>
+  <% end  %>
+  </div>
+  <br>
+  <% if @user.new_record? %>
+      <div class="field">
+        <%= f.label "duration" %>
+        <table style="width:100%">
+          <tr>
+            <td><%= f.radio_button :duration, 30 %><%= f.label :duration, '30 days', :style => "display:inline" %></td>
+          </tr>
+          <tr>
+            <td><%= f.radio_button :duration, 60 %><%= f.label :duration, '60 days', :style => "display:inline" %></td>
+          </tr>
+          <tr>
+            <td><%= f.radio_button :duration, 120 %><%= f.label :duration, '120 days', :style => "display:inline" %></td>
+          </tr>
+        </table>
+        <br>
+        <%#= f.collection_radio_buttons :duration, [[30, '30 days'], [60, '60 days'], [120, '120 days']], :first, :last %>
+      </div>
+  <% else %>
+      <div class="field">
+        <%= f.label :mute %>
+        <div class="switch round tiny">
+          <%= f.input :mute %>
+        </div>
+      </div>
+  <% end %>
+  <div class="field">
+    <%= f.label "delivery time" %>
+    <br>
+    <%= f.select :delivery_time, ["6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM"], :selected => @sub.delivery_time %>
+  </div>
+  <div class="field">
+    <%= f.association :category, :include_blank => false, :input_html => {:onchange => "messages_load(this, '#{@counter.to_s + "new_subscriptions"}')"} %>
+  </div>
+  <div class="field">
+    <%= f.label "Message" %>
+    <br>
+    <%= f.select :message_id, options_for_select(Message.where(:category_id => @sub.category_id).pluck(:content, :id), :selected => selected_message(@sub)), {} , :id => "messages_select_#{@counter.to_s + "new_subscriptions"}"%>
+  </div>
+
+</fieldset>

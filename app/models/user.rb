@@ -1,10 +1,10 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
   has_many :subscriptions
-  accepts_nested_attributes_for :subscriptions
+  accepts_nested_attributes_for :subscriptions , allow_destroy: true
   attr_accessor :terms
 
-  validates_presence_of :name, :surname, :phone
+  validates_presence_of :name, :surname, :phone , :subscriptions
   validates_uniqueness_of :phone
 
   before_create :set_uuid

@@ -5,6 +5,8 @@ class Subscription < ActiveRecord::Base
   belongs_to :category
   has_many :jobs
 
+  validates_presence_of :duration
+
   attr_accessor :update_flag, :update_delivery_time_flag, :update_mute_flag
 
   after_create :subscription_message_fill
@@ -12,6 +14,7 @@ class Subscription < ActiveRecord::Base
   after_update :delivery_time_updated, :if => (:delivery_time_changed?)
   after_update :mute_updated, :if => (:mute_changed?)
   after_create :enqueue_first_job
+
 
 
   def mute_updated
