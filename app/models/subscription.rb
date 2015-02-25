@@ -14,8 +14,12 @@ class Subscription < ActiveRecord::Base
   after_update :delivery_time_updated, :if => (:delivery_time_changed?)
   after_update :mute_updated, :if => (:mute_changed?)
   after_create :enqueue_first_job
+  after_destroy :destroy_dj
 
-
+  #delete the enqueued job
+  def destroy_dj
+    delete_enqueued_jobs
+  end
 
   def mute_updated
     if self.update_mute_flag.blank? and self.created_at != self.updated_at
@@ -157,6 +161,10 @@ class Subscription < ActiveRecord::Base
     else
       #  subscription expired
       s.update(:status => "expired")
+      renewal_msg = "Your affirmation service has expired. Please login at http://realmobile.se to renew your service"
+      logger.debug "sending welcome message ====================>"
+      #pushover
+      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
     end
 
   end
@@ -167,6 +175,7 @@ class Subscription < ActiveRecord::Base
     self.jobs.where(:status => "enqueued").each do |j|
       dj = Delayed::Job.find_by_id(j.delayed_job_id)
       dj.delete if dj
+      j.update(:status => "job removed")
     end
   end
 end

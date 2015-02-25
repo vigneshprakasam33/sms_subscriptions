@@ -1,16 +1,21 @@
-<h1>Listing subscriptions</h1>
+<br>
+<br>
+<div class="row">
 
-<table>
+  <div class="large-centered small-centered columns">
+    <div class="panel text-center">
+      <h3>Subscriptions</h3>
+    </div>
+
+<table style="width:100%" id="subscriptions_table">
   <thead>
     <tr>
-      <th>Order</th>
+      <th>User</th>
       <th>Subscription message</th>
       <th>Message</th>
-      <th>Frequency</th>
+      <th>Days subscribed</th>
       <th>Delivery time</th>
-      <th>Gift</th>
-      <th></th>
-      <th></th>
+      <th>Days done</th>
       <th></th>
     </tr>
   </thead>
@@ -18,14 +23,12 @@
   <tbody>
     <% @subscriptions.each do |subscription| %>
       <tr>
-        <td><%= subscription.order_id %></td>
+        <td><%= link_to "#{subscription.user.phone}" , edit_user_path(:id => subscription.user.uuid) %></td>
         <td><%= subscription.subscription_message %></td>
-        <td><%= subscription.message_id %></td>
-        <td><%= subscription.frequency %></td>
-        <td><%= subscription.delivery_time %></td>
-        <td><%= subscription.gift %></td>
-        <td><%= link_to 'Show', subscription %></td>
-        <td><%= link_to 'Edit', edit_subscription_path(subscription) %></td>
+        <td><%= subscription.message.name %></td>
+        <td><%= subscription.duration %></td>
+        <td><%= subscription.delivery_time + " " + subscription.user.time_zone%></td>
+        <td><%= subscription.messages_count %></td>
         <td><%= link_to 'Destroy', subscription, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
@@ -34,4 +37,5 @@
 
 <br>
 
-<%= link_to 'New Subscription', new_subscription_path %>
+  </div>
+</div>

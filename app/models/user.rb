@@ -1,6 +1,6 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
-  has_many :subscriptions
+  has_many :subscriptions , :dependent => :destroy
   accepts_nested_attributes_for :subscriptions , allow_destroy: true
   attr_accessor :terms
 

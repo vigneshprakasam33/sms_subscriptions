@@ -14,3 +14,9 @@ $(document).ready(function(){
     $("#messages_table").dataTable({
     });
 });
+
+$(document).ready(function(){
+    $("#subscriptions_table").dataTable({
+    });
+});
+
