@@ -66,6 +66,7 @@ class UsersController < ApplicationController
         format.html { redirect_to new_user_path, notice: 'Your SMS Subscription has been activated.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
+        @user.terms = false
         format.html { render action: 'new' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
