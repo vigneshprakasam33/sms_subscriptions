@@ -118,7 +118,7 @@ class Subscription < ActiveRecord::Base
       #f.close
 
       #pushover
-      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{s.subscription_message}"
+      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9100", :title => "Daily Dose", :message => "#{s.subscription_message}"
 
       #JOB STATUS UPDATE
       j.reload
@@ -164,7 +164,7 @@ class Subscription < ActiveRecord::Base
       renewal_msg = "Your affirmation service has expired. Please login at http://realmobile.se to renew your service"
       logger.debug "sending welcome message ====================>"
       #pushover
-      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9100", :title => "Daily Dose", :message => "#{renewal_msg}"
     end
 
   end

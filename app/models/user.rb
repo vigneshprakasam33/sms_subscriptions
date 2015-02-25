@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
     end
     logger.debug "sending welcome message ====================>"
     #pushover
-    RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{welcome_msg}"
+    RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9100", :title => "Daily Dose", :message => "#{welcome_msg}"
   end
 
   def time_zone_updated
