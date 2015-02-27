@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   def validate_subscriptions_count
     if self.subscriptions.size < 1
       errors.add(:subscriptions, ":Need 1 or more Subscription")
-    elsif self.subscriptions.size > 3
+    elsif self.subscriptions.size > $max_message_subscription
       errors.add(:subscriptions, ":We currently support a maximum of 3 subscriptions per number")
     end
   end
