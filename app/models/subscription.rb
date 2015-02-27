@@ -77,7 +77,8 @@ class Subscription < ActiveRecord::Base
     if self.delivery_time.last(2) == "AM"
       (self.delivery_time.split(' ')[0]).to_i
     elsif self.delivery_time.last(2) == "PM"
-      (self.delivery_time.split(' ')[0]).to_i + 12
+      #12 pm or later
+      (self.delivery_time.split(' ')[0]).to_i + (  (self.delivery_time.split(' ')[0]).to_i  == 12 ? 0 : 12 )
     else
       nil
     end
