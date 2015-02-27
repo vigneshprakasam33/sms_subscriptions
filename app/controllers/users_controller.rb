@@ -1,6 +1,14 @@
 class UsersController < ApplicationController
   skip_before_filter :require_login, :only => [:new, :create, :signin, :login, :logout]
-  before_action :set_user, only: [:edit, :update, :destroy, :show]
+  before_action :set_user, only: [:edit, :update, :destroy, :show , :buy_more]
+
+  #buy more subscriptions
+  def buy_more
+    default_category = Category.find_by_name("Business")
+
+    @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id)     if @user.subscriptions.count < $max_message_subscription
+    render "users/buy_more"
+  end
 
   def login
     if request.post?

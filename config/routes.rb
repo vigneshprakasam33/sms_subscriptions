@@ -15,6 +15,9 @@ SmsSubscriptions::Application.routes.draw do
       post :login
       get :logout
     end
+    member do
+      get :buy_more
+    end
   end
 
   get 'signin' => 'users#signin'

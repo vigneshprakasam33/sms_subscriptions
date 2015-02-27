@@ -1,12 +1,12 @@
 <fieldset class=".subscription_fieldset">
   <div class="right">
-  <% if  @user.new_record?%>
+  <% if  @user.new_record? or @buy_more%>
       <%= f.hidden_field :_destroy %>
       <%= link_to_remove_fields "X", f %>
   <% end  %>
   </div>
   <br>
-  <% if @user.new_record? %>
+  <% if @user.new_record? or @buy_more %>
       <div class="field">
         <%= f.label "duration" %>
         <table style="width:100%">
