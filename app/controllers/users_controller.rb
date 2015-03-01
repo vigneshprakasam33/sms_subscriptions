@@ -15,7 +15,11 @@ class UsersController < ApplicationController
       @user, res = User.login(params[:user][:login], params[:user][:password])
       if @user and res == :success
         session[:uid] = @user.uuid
-        redirect_to edit_user_path(:id => @user.uuid)
+        if !@user.is_admin
+          redirect_to edit_user_path(:id => @user.uuid)
+        else
+          redirect_to users_path
+        end
       else
         redirect_to signin_path , :alert => "Invalid username or password"
       end

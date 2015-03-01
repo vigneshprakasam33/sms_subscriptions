@@ -23,8 +23,8 @@
         </div>
 
         <div class="field">
-    <%= f.label :content %><br>
-    <%= f.text_area :content %>
+    <%= f.label "Content(160 chars)" %><br>
+    <%= f.text_area :content , :maxlength => 160 , :size => 40 %>
   </div>
   <div class="actions">
     <%= f.submit :class => "button success radius"%>

@@ -6,6 +6,9 @@ SmsSubscriptions::Application.routes.draw do
   resources :messages do
     collection do
       get :get_messages_on_category
+      get :new_category
+      post :create_category
+      delete :destroy_category
     end
   end
 
@@ -22,6 +25,7 @@ SmsSubscriptions::Application.routes.draw do
 
   get 'signin' => 'users#signin'
   get 'jobs' => 'users#jobs'
+  delete 'category/:id' => 'messages#destroy_category'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

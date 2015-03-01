@@ -12,10 +12,10 @@
     <tr>
       <th>User</th>
       <th>Subscription message</th>
-      <th>Message</th>
       <th>Days subscribed</th>
       <th>Delivery time</th>
       <th>Days done</th>
+      <th>Status</th>
       <th></th>
     </tr>
   </thead>
@@ -25,10 +25,16 @@
       <tr>
         <td><%= link_to "#{subscription.user.phone}" , edit_user_path(:id => subscription.user.uuid) %></td>
         <td><%= subscription.subscription_message %></td>
-        <td><%= subscription.message.name %></td>
         <td><%= subscription.duration %></td>
         <td><%= subscription.delivery_time + " " + subscription.user.time_zone%></td>
         <td><%= subscription.messages_count %></td>
+        <td>
+          <% if subscription.messages_count < subscription.duration  %>
+              <span class="label success">Active</span>
+          <% else  %>
+              <span class="label warning">Expired</span>
+          <% end  %>
+        </td>
         <td><%= link_to 'Destroy', subscription, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
