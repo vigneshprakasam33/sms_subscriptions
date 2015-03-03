@@ -10,6 +10,7 @@ SmsSubscriptions::Application.routes.draw do
       post :create_category
       delete :destroy_category
       post :update_config
+      post :reject
     end
   end
 

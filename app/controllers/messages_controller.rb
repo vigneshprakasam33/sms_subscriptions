@@ -1,7 +1,7 @@
 class MessagesController < ApplicationController
-  skip_before_filter :require_login, :only => [:get_messages_on_category]
+  skip_before_filter :require_login, :only => [:get_messages_on_category , :reject]
   before_action :set_message, only: [:show, :edit, :update, :destroy]
-
+  protect_from_forgery :except => :reject
 
   # GET /messages
   # GET /messages.json
@@ -10,6 +10,21 @@ class MessagesController < ApplicationController
     @messages = Message.all
     @config_messages = ConfigMessage.where(:user_id => current_user.id)
     authorize! :update, @messages
+  end
+
+  def reject
+    from_number = params[:From]
+    from_number = "44"
+    if from_number and params[:Body].include? "REJECT"
+      logger.debug "rejecting======>"
+       u = User.find_by_phone(from_number)
+       if u and !u.subscriptions.blank?
+         u.subscriptions.each do |s|
+           s.update :mute => true
+         end
+       end
+    end
+    render :nothing => true
   end
 
   def update_config
