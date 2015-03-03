@@ -6,32 +6,54 @@
     <div class="panel text-center">
       <h3>Messages</h3>
     </div>
+    <%= simple_form_for(@user, :url => update_config_messages_path, :method => :post) do |f| %>
+        <% if @user.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(@user.errors.count, "error") %> prohibited this message from being saved:</h2>
 
-    <table style="width:100%" id="messages_table">
-  <thead>
-    <tr>
-      <th>Content</th>
-      <th>Category</th>
-      <th>Edit</th>
-      <th>Delete?</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @messages.each do |message| %>
-      <tr>
-        <td><%= message.content %></td>
-        <td><%= message.category.name %></td>
-        <td><%= link_to 'Edit', edit_message_path(message) %></td>
-        <td><%= link_to 'Destroy', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+              <ul>
+                <% @user.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+        <% end %>
+        <%= f.hidden_field :id , :value => @user.id %>
+        <% @user.config_messages.each do |m| %>
+            <%= f.simple_fields_for(:config_messages, m) do |ff| %>
+                <%= ff.hidden_field :user_id , :value => @user.id %>
+                <label><%= m.message_type %></label>
+                <%= ff.text_area :content %>
+            <% end %>
+        <% end %>
+        <div class="actions">
+          <%= f.submit :class => "button radius tiny success" %>
+        </div>
     <% end %>
-  </tbody>
-</table>
+    <table style="width:100%" id="messages_table">
+      <thead>
+      <tr>
+        <th>Content</th>
+        <th>Category</th>
+        <th>Edit</th>
+        <th>Delete?</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @messages.each do |message| %>
+          <tr>
+            <td><%= message.content %></td>
+            <td><%= message.category.name %></td>
+            <td><%= link_to 'Edit', edit_message_path(message) %></td>
+            <td><%= link_to 'Destroy', message, method: :delete, data: {confirm: 'Are you sure?'} %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
 
-<br>
+    <br>
 
-<%= link_to 'New Message category', new_category_messages_path  , :class => "button success tiny radius"%>
-<%= link_to 'New Message', new_message_path  , :class => "button success tiny radius"%>
+    <%= link_to 'New Message category', new_category_messages_path, :class => "button success tiny radius" %>
+    <%= link_to 'New Message', new_message_path, :class => "button success tiny radius" %>
   </div>
 </div>

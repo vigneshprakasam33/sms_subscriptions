@@ -1,7 +1,9 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
   has_many :subscriptions , :dependent => :destroy
+  has_many :config_messages , :dependent => :destroy
   accepts_nested_attributes_for :subscriptions , allow_destroy: true
+  accepts_nested_attributes_for :config_messages , allow_destroy: true
   attr_accessor :terms
 
   validates_presence_of :name, :surname, :phone
@@ -15,7 +17,7 @@ class User < ActiveRecord::Base
 
 
   def validate_subscriptions_count
-    if self.subscriptions.size < 1
+    if self.subscriptions.size < 1  and self.is_admin.blank?
       errors.add(:subscriptions, ":Need 1 or more Subscription")
     elsif self.subscriptions.size > $max_message_subscription
       errors.add(:subscriptions, ":We currently support a maximum of 3 subscriptions per number")
@@ -28,9 +30,9 @@ class User < ActiveRecord::Base
 
   def welcome_message
     if self.gift.blank?
-      welcome_msg = "Welcome to the Affirmation service. Congratulations on taking action. To mute or change delivery time, login at http://realmobile.se/signin . Your user name is #{self.phone} and password is #{self.password}"
+      welcome_msg = ConfigMessage.find_by_message_type("welcome").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
     else
-      welcome_msg = " Dear #{self.name}, You’ve been given a gift for an sms affirmation service. Login at http://realmobile.se/signin . Your user name is #{self.phone} and password is #{self.password}. To accept, do nothing. To reject reply: REJECT"
+      welcome_msg = ConfigMessage.find_by_message_type("welcome_gift").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
     end
     logger.debug "sending welcome message ====================>"
     #pushover

@@ -158,11 +158,17 @@ class Subscription < ActiveRecord::Base
 
       s.jobs << new_j
 
+    #RENEWAL msg check
+      if s.messages_count.to_i + 3 == s.duration.to_i
+        renewal_msg = ConfigMessage.find_by_message_type("renewal").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
+        RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+      end
+
 
     else
       #  subscription expired
       s.update(:status => "expired")
-      renewal_msg = "Your affirmation service has expired. Please login at http://realmobile.se to renew your service"
+      renewal_msg = ConfigMessage.find_by_message_type("expiry").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
       logger.debug "sending welcome message ====================>"
       #pushover
       RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"

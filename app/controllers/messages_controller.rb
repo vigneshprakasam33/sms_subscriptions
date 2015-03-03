@@ -6,10 +6,17 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.json
   def index
+    @user = current_user
     @messages = Message.all
+    @config_messages = ConfigMessage.where(:user_id => current_user.id)
     authorize! :update, @messages
   end
 
+  def update_config
+    user = User.find(params["user"]["id"])
+    user.update(user_params)
+    redirect_to messages_path
+  end
   # GET /messages/1
   # GET /messages/1.json
   def show
@@ -116,5 +123,9 @@ class MessagesController < ApplicationController
 
   def category_params
     params.require(:category).permit(:name, :description , :id)
+  end
+
+  def user_params
+    params.require(:user).permit(:id , config_messages_attributes: [:id , :content , :user_id]  )
   end
 end
