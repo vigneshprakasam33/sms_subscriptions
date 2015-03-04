@@ -20,3 +20,6 @@ $(document).ready(function(){
     });
 });
 
+$(document).ready(function(){
+    recalculate();
+});

@@ -7,17 +7,17 @@
   </div>
   <br>
   <% if @user.new_record? or @buy_more %>
-      <div class="field">
+      <div class="field .sms_duration">
         <%= f.label "duration" %>
         <table style="width:100%">
           <tr>
-            <td><%= f.radio_button :duration, 30 %><%= f.label :duration, '30 days', :style => "display:inline" %></td>
+            <td><%= f.radio_button :duration, 30 , :onchange => "recalculate()"%><%= f.label :duration, '30 days', :style => "display:inline" %></td>
           </tr>
           <tr>
-            <td><%= f.radio_button :duration, 60 %><%= f.label :duration, '60 days', :style => "display:inline" %></td>
+            <td><%= f.radio_button :duration, 60 , :onchange => "recalculate()"%><%= f.label :duration, '60 days', :style => "display:inline" %></td>
           </tr>
           <tr>
-            <td><%= f.radio_button :duration, 120 %><%= f.label :duration, '120 days', :style => "display:inline" %></td>
+            <td><%= f.radio_button :duration, 120 , :onchange => "recalculate()"%><%= f.label :duration, '120 days', :style => "display:inline" %></td>
           </tr>
         </table>
         <br>

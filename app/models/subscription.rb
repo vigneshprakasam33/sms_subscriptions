@@ -9,11 +9,13 @@ class Subscription < ActiveRecord::Base
 
   attr_accessor :update_flag, :update_delivery_time_flag, :update_mute_flag
 
-  after_create :subscription_message_fill
   after_update :subscription_message_updated, :if => (:message_id_changed?)
   after_update :delivery_time_updated, :if => (:delivery_time_changed?)
   after_update :mute_updated, :if => (:mute_changed?)
-  after_create :enqueue_first_job
+
+  #after_create :subscription_message_fill
+  #after_create :enqueue_first_job
+
   after_destroy :destroy_dj
 
   #delete the enqueued job

@@ -1,38 +1,59 @@
 #encoding: utf-8
 class User < ActiveRecord::Base
-  has_many :subscriptions , :dependent => :destroy
-  has_many :config_messages , :dependent => :destroy
-  accepts_nested_attributes_for :subscriptions , allow_destroy: true
-  accepts_nested_attributes_for :config_messages , allow_destroy: true
-  attr_accessor :terms
+  has_many :subscriptions, :dependent => :destroy
+  has_many :config_messages, :dependent => :destroy
+  has_many :orders, :dependent => :destroy
+  accepts_nested_attributes_for :subscriptions, allow_destroy: true
+  accepts_nested_attributes_for :config_messages, allow_destroy: true
+  attr_accessor :terms, :payment
 
   validates_presence_of :name, :surname, :phone
   validates_uniqueness_of :phone
   validate :validate_subscriptions_count
 
   before_create :set_uuid
-  after_create :welcome_message
+  #after_create :welcome_message
+  #after_update :activate_check , :if => (:activate_changed?)
   after_update :time_zone_updated, :if => (:time_zone_changed?)
   after_update :time_zone_updated, :if => (:phone_changed?)
 
+  #def activate_check
+  #  if activate
+  #    welcome_message
+  #  end
+  #end
+
+  def calculate_total_in_cents
+    total = 0
+    self.subscriptions.each do |s|
+      if s.duration.to_i == 30
+        total += 200
+      elsif s.duration.to_i == 60
+        total += 400
+      else
+        total += 800
+      end
+    end
+    total
+  end
 
   def validate_subscriptions_count
-    if self.subscriptions.size < 1  and self.is_admin.blank?
+    if self.subscriptions.size < 1 and self.is_admin.blank?
       errors.add(:subscriptions, ":Need 1 or more Subscription")
     elsif self.subscriptions.size > $max_message_subscription
       errors.add(:subscriptions, ":We currently support a maximum of 3 subscriptions per number")
     end
   end
-  
+
   def phone=(phone)
     write_attribute(:phone, phone.gsub(/[^0-9\+]/, ''))
   end
 
   def welcome_message
     if self.gift.blank?
-      welcome_msg = ConfigMessage.find_by_message_type("welcome").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
+      welcome_msg = ConfigMessage.find_by_message_type("welcome").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
     else
-      welcome_msg = ConfigMessage.find_by_message_type("welcome_gift").content.gsub('<phone_number>' , self.phone).gsub('<password>' , self.password).gsub('<name>',self.name)
+      welcome_msg = ConfigMessage.find_by_message_type("welcome_gift").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
     end
     logger.debug "sending welcome message ====================>"
     #pushover

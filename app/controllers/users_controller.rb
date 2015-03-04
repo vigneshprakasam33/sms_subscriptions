@@ -1,12 +1,12 @@
 class UsersController < ApplicationController
   skip_before_filter :require_login, :only => [:new, :create, :signin, :login, :logout]
-  before_action :set_user, only: [:edit, :update, :destroy, :show , :buy_more]
+  before_action :set_user, only: [:edit, :update, :destroy, :show, :buy_more]
 
   #buy more subscriptions
   def buy_more
-    default_category = Category.find_by_name("Business")
-
-    @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id)     if @user.subscriptions.count < $max_message_subscription
+    default_category = Category.find_by_name("Self Help")
+    @user.payment = "paypal"
+    @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id) if @user.subscriptions.count < $max_message_subscription
     render "users/buy_more"
   end
 
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
           redirect_to users_path
         end
       else
-        redirect_to signin_path , :alert => "Invalid username or password"
+        redirect_to signin_path, :alert => "Invalid username or password"
       end
     else
       redirect_to signin_path
@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    @users = User.where(:activate => true)
     authorize! :update, @users
   end
 
@@ -59,8 +59,8 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
-    default_category = Category.find_by_name("Business")
-    @user = User.new(:time_zone => "Stockholm")
+    default_category = Category.find_by_name("Self Help")
+    @user = User.new(:time_zone => "Stockholm", :payment => "paypal")
     s = @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id)
   end
 
@@ -72,13 +72,21 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
     respond_to do |format|
-      if @user.save
+      if @user.save and @user.payment == "paypal"
+        response = EXPRESS_GATEWAY.setup_purchase(@user.calculate_total_in_cents,
+                                                  :ip => request.remote_ip,
+                                                  :return_url => new_orders_url,
+                                                  :cancel_return_url => orders_url
+        )
+
+        @user.update(:payment_token => response.token)
+        redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token)  and return
         format.html { redirect_to new_user_path, notice: 'Your SMS Subscription has been activated.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
         @user.terms = false
+
         format.html { render action: 'new' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end

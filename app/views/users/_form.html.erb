@@ -60,26 +60,26 @@
         <hr>
         <h5 class="text-center">Subscriptions</h5>
 
-          <% sub_counter = 0 %>
-          <% @user.subscriptions.each do |sub| %>
-              <%= f.simple_fields_for :subscriptions, sub do |s| %>
-                  <% @sub = sub %>
-                  <% @counter = sub_counter  %>
-                  <%= render 'users/subscription_fields', :f => s  %>
-                  <% sub_counter = sub_counter + 1 %>
-              <% end %>
+        <% sub_counter = 0 %>
+        <% @user.subscriptions.each do |sub| %>
+            <%= f.simple_fields_for :subscriptions, sub do |s| %>
+                <% @sub = sub %>
+                <% @counter = sub_counter %>
+                <%= render 'users/subscription_fields', :f => s %>
+                <% sub_counter = sub_counter + 1 %>
+            <% end %>
 
-          <% end %>
-
-        <% if @user.new_record? %>
-        <p><%= link_to_add_fields "Add Subscription", f, :subscriptions  %></p>
-         <br><div id="sub_notice"></div>
         <% end %>
-        <!--</div>-->
-        <!--</div>-->
+
         <% if @user.new_record? %>
+            <p><%= link_to_add_fields "Add Subscription", f, :subscriptions %></p>
+            <!--<br><div id="sub_notice"></div>-->
+        <% end %>
+        <hr>
+        <% if @user.new_record? %>
+            <h5 class="text-center">Gift ?</h5>
+
             <div class="field">
-              <%= f.label :gift %>
               <table style="width:100%">
                 <tr>
                   <td><%= f.radio_button :gift, false %><%= f.label :gift, 'No. This service is for me', :style => "display:inline" %></td>
@@ -91,10 +91,26 @@
               <%#= f.label :gift  %>
               <%#= f.collection_radio_buttons :gift, [[false, 'No. It is for me'], [true, 'Yes. I am gifting this service']], :first, :last  ,  :style => "display:inline"%>
             </div>
-        <% end %>
-        <% if @user.new_record? %>
-            <hr>
 
+            <hr>
+            <h5 class="text-center">Payment</h5>
+            <div class="panel">
+            <p class="text-center">Price : $ <span id="price_box">2</span> USD</p>
+            </div>
+            <div class="field">
+              <table style="width:100%">
+                <tr>
+                  <td><%= f.radio_button :payment, "paypal" %><%= f.label :payment, 'Paypal', :style => "display:inline" %></td>
+                </tr>
+                <tr>
+                  <td><%= f.radio_button :payment, "2checkout" %><%= f.label :payment, '2Checkout', :style => "display:inline" %></td>
+                </tr>
+              </table>
+              <%#= f.label :gift  %>
+              <%#= f.collection_radio_buttons :gift, [[false, 'No. It is for me'], [true, 'Yes. I am gifting this service']], :first, :last  ,  :style => "display:inline"%>
+            </div>
+
+            <hr>
             <div class="field">
               <%= f.label :terms do %>
                   <%= f.check_box :terms, :onclick => "enable_buy_btn(this)" %>
@@ -121,6 +137,7 @@
 
 
 <% end %>
+
 
 <!--Terms-->
 <div id="terms_modal" class="reveal-modal" data-reveal>
@@ -162,8 +179,7 @@
 
 
     function add_fields(link, association, content) {
-        if(($('fieldset').length - $('fieldset:hidden').length) >= 3  )
-        {
+        if (($('fieldset').length - $('fieldset:hidden').length) >= 3) {
 //           $('#sub_notice').html("<div data-alert class=\"alert-box warning round\">You can subscribe to a maximum of 3 subscriptions.<a href=\"#\" class=\"close\">&times;</a></div>");
             alert('You can subscribe to a maximum of 3 subscriptions only.')
             return;
@@ -171,17 +187,57 @@
         var new_id = new Date().getTime();
         var regexp = new RegExp("new_" + association, "g")
         $(link).parent().before(content.replace(regexp, new_id));
+        recalculate();
     }
 
     function remove_fields(link) {
-        if(($('fieldset').length - $('fieldset:hidden').length) <= 1  )
-        {
+        if (($('fieldset').length - $('fieldset:hidden').length) <= 1) {
 //            $('#sub_notice').html("<div data-alert class=\"alert-box warning round\">You need to have a minimum of 1 subscription.<a href=\"#\" class=\"close\">&times;</a></div>");
             alert('You need to have a minimum of 1 subscription.');
             return;
         }
         $(link).prev("input[type=hidden]").val("1");
         $(link).closest("fieldset").hide();
+        recalculate();
+    }
+
+    function recalculate() {
+
+        total = 0;
+
+       $('#new_user fieldset input[type=radio]:checked').each(function () {
+           if($(this))
+                a = $(this).val();
+//                alert("checked => " + a);
+                if (a) {
+                    if (a == 30)
+                        total += 2;
+                    else if (a == 60)
+                        total += 4;
+                    else if (a == 120)
+                        total += 8;
+                }
+           return total;
+        });
+
+        $('#new_user fieldset:hidden input[type=radio]:checked').each(function () {
+            if($(this))
+                a = $(this).val();
+//                alert("checked => " + a);
+            if (a) {
+                if (a == 30)
+                    total -= 2;
+                else if (a == 60)
+                    total -= 4;
+                else if (a == 120)
+                    total -= 8;
+            }
+            return total;
+        });
+
+        //alert(total)
+        $('#price_box').html(total);
+        //$('input[name="user[subscriptions_attributes][0][duration]"]:checked', '#new_user').val()
     }
 </script>
 
