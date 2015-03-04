@@ -1,7 +1,13 @@
 SmsSubscriptions::Application.routes.draw do
-  resources :orders
 
   resources :subscriptions
+
+  resources :orders do
+    collection do
+      get :get_token
+      get :express
+    end
+  end
 
   resources :messages do
     collection do

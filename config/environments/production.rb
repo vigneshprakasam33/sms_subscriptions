@@ -78,4 +78,16 @@ SmsSubscriptions::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  config.after_initialize do
+    ActiveMerchant::Billing::Base.mode = :test
+    paypal_options = {
+        :login => "vickypedia.p_api1.gmail.com",
+        :password => "T3AF736NPUKKRVHZ",
+        :signature => "A7C.wSthdJc-XnRjqtJQ9wKVbQ6qAXkm-quWpNgnWbIAQevKZC-pPWD9",
+        :method => "SetExpressCheckout"
+    }
+    ::STANDARD_GATEWAY = ActiveMerchant::Billing::PaypalGateway.new(paypal_options)
+    ::EXPRESS_GATEWAY = ActiveMerchant::Billing::PaypalExpressGateway.new(paypal_options)
+  end
 end
