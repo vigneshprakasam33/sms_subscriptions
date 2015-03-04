@@ -76,7 +76,7 @@ class UsersController < ApplicationController
       if @user.save and @user.payment == "paypal"
         response = EXPRESS_GATEWAY.setup_purchase(@user.calculate_total_in_cents,
                                                   :ip => request.remote_ip,
-                                                  :return_url => new_orders_url,
+                                                  :return_url => new_order_url,
                                                   :cancel_return_url => orders_url
         )
 

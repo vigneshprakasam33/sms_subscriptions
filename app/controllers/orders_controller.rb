@@ -6,6 +6,11 @@ class OrdersController < ApplicationController
   # GET /orders.json
   def index
     @orders = Order.all
+    flash[:error] = "Payment failed"
+    respond_to do |format|
+      format.html { redirect_to new_user_path  }
+      format.json { render json: @user.errors, status: :unprocessable_entity }
+    end
   end
 
   #sample. not used
@@ -50,13 +55,14 @@ class OrdersController < ApplicationController
         else
           logger.debug "==========> can't find user based on token"
           @user.terms = false
-          format.html { render action: 'new' }
+          flash[:error] = "Payment failed"
+          format.html { redirect_to new_user_path  }
           format.json { render json: @user.errors, status: :unprocessable_entity }
         end
       else
         logger.debug "======>failed purchase"
         flash[:error] = "Payment failed"
-        format.html { render action: 'new' }
+        format.html { redirect_to new_user_path  }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
