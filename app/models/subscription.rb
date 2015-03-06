@@ -1,6 +1,6 @@
 class Subscription < ActiveRecord::Base
   belongs_to :user
-  belongs_to :order
+  belongs_to :order , :dependent => :destroy
   belongs_to :message
   belongs_to :category
   has_many :jobs

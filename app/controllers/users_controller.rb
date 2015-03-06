@@ -1,13 +1,19 @@
 class UsersController < ApplicationController
-  skip_before_filter :require_login, :only => [:new, :create, :signin, :login, :logout]
-  before_action :set_user, only: [:edit, :update, :destroy, :show, :buy_more]
+  skip_before_filter :require_login, :only => [:new, :create, :signin, :login, :logout, :update, :buy_more]
+  before_action :set_user, only: [:edit, :update, :destroy, :buy_more]
 
   #buy more subscriptions
   def buy_more
     default_category = Category.find_by_name("Self Help")
     @user.payment = "paypal"
-    @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id) if @user.subscriptions.count < $max_message_subscription
-    render "users/buy_more"
+    @user.subscriptions.build(:subscription_message => "", :duration => 30, :category_id => default_category.id, :buy_more => true) if @user.subscriptions.count < $max_message_subscription
+
+    if @user.subscriptions.count >= 3
+      redirect_to edit_user_path(:id => @user.uuid)
+    else
+      render "users/buy_more"
+    end
+
   end
 
   def login
@@ -52,10 +58,6 @@ class UsersController < ApplicationController
     authorize! :update, @users
   end
 
-  # GET /users/1
-  # GET /users/1.json
-  def show
-  end
 
   # GET /users/new
   def new
@@ -77,11 +79,13 @@ class UsersController < ApplicationController
         response = EXPRESS_GATEWAY.setup_purchase(@user.calculate_total_in_cents,
                                                   :ip => request.remote_ip,
                                                   :return_url => new_order_url,
-                                                  :cancel_return_url => orders_url
+                                                  :cancel_return_url => orders_url,
+                                                  :currency => "USD",
+                                                  :description => "Sms affirmation service - $#{"%.2f" % (@user.calculate_total_in_cents / 100 ) }",
         )
 
         @user.update(:payment_token => response.token)
-        redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token)  and return
+        redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token) and return
         format.html { redirect_to new_user_path, notice: 'Your SMS Subscription has been activated.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -100,12 +104,39 @@ class UsersController < ApplicationController
     if current_user.is_admin.blank? and current_user.uuid != @user.uuid
       raise CanCan::AccessDenied
     end
+    @user.temp_buy_more = params[:user][:buy_more_price]
     respond_to do |format|
       if @user.update(user_params)
+        #items = []
+        #@user.subscriptions.where(:buy_more => true).each do |s|
+        #  item = {}
+        #  item[:name] = s.duration.to_s + " days package"
+        #  item[:description] = s.duration.to_s + " days package of sms service"
+        #  item[:amount] = PriceConfig.pricing(s.duration.to_i)
+        #  item[:quantity] = 1
+        #
+        #  items << item
+        #end
+
+        logger.debug "=========AMOUNT=======>" + (@user.temp_buy_more.to_f * 100).to_s
+        response = EXPRESS_GATEWAY.setup_purchase(params[:user][:buy_more_price].to_f * 100,
+                                                  :ip => request.remote_ip,
+                                                  :return_url => buy_more_orders_url,
+                                                  :cancel_return_url => buy_more_failed_orders_url,
+                                                  :currency => "USD",
+                                                  :description => "Sms affirmation service - $#{"%.2f" % @user.temp_buy_more.to_f }",
+        #:return_url => buy_more_orders_url,
+        #:cancel_return_url => buy_more_failed_orders_url
+        )
+
+        @user.update(:payment_token => response.token)
+        redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token) and return
+
+        #unreachable code
         format.html { redirect_to edit_user_path(:id => @user.uuid), notice: 'Settings successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { render action: 'buy_more' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end

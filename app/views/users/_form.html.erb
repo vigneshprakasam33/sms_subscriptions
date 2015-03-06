@@ -211,11 +211,11 @@
 //                alert("checked => " + a);
                 if (a) {
                     if (a == 30)
-                        total += 2;
+                        total += <%= PriceConfig.pricing(30) %>;
                     else if (a == 60)
-                        total += 4;
+                        total += <%= PriceConfig.pricing(60) %>;
                     else if (a == 120)
-                        total += 8;
+                        total += <%= PriceConfig.pricing(120) %>;
                 }
            return total;
         });
@@ -226,11 +226,11 @@
 //                alert("checked => " + a);
             if (a) {
                 if (a == 30)
-                    total -= 2;
+                    total -= <%= PriceConfig.pricing(30) %>;
                 else if (a == 60)
-                    total -= 4;
+                    total -= <%= PriceConfig.pricing(60) %>;
                 else if (a == 120)
-                    total -= 8;
+                    total -= <%= PriceConfig.pricing(120) %>;
             }
             return total;
         });

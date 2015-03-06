@@ -7,6 +7,10 @@
   </div>
   <br>
   <% if @user.new_record? or @buy_more %>
+      <% if @buy_more  %>
+      <%= f.hidden_field :buy_more , :value => true %>
+
+      <% end %>
       <div class="field .sms_duration">
         <%= f.label "duration" %>
         <table style="width:100%">

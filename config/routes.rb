@@ -6,6 +6,8 @@ SmsSubscriptions::Application.routes.draw do
     collection do
       get :get_token
       get :express
+      get :buy_more
+      get :buy_more_failed
     end
   end
 

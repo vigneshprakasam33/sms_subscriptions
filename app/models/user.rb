@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :orders, :dependent => :destroy
   accepts_nested_attributes_for :subscriptions, allow_destroy: true
   accepts_nested_attributes_for :config_messages, allow_destroy: true
-  attr_accessor :terms, :payment
+  attr_accessor :terms, :payment , :buy_more_price
 
   validates_presence_of :name, :surname, :phone
   validates_uniqueness_of :phone
@@ -23,15 +23,16 @@ class User < ActiveRecord::Base
   #  end
   #end
 
+  #for new order
   def calculate_total_in_cents
     total = 0
     self.subscriptions.each do |s|
       if s.duration.to_i == 30
-        total += 200
+        total += PriceConfig.pricing(30) * 100
       elsif s.duration.to_i == 60
-        total += 400
+        total += PriceConfig.pricing(60) * 100
       else
-        total += 800
+        total += PriceConfig.pricing(120) * 100
       end
     end
     total

@@ -1,15 +1,15 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_login, :only => [:express, :index, :new]
+  skip_before_filter :require_login, :only => [:express, :index, :new , :buy_more , :buy_more_failed]
   protect_from_forgery :except => [:express, :new, :index]
   # GET /orders
   # GET /orders.json
   def index
-    @orders = Order.all
+    @user = User.find_by_payment_token(params[:token])
+    @user.destroy
     flash[:error] = "Payment failed"
     respond_to do |format|
-      format.html { redirect_to new_user_path  }
-      format.json { render json: @user.errors, status: :unprocessable_entity }
+      format.html { redirect_to new_user_path }
     end
   end
 
@@ -23,11 +23,6 @@ class OrdersController < ApplicationController
   #  redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token)
   #end
 
-
-  # GET /orders/1
-  # GET /orders/1.json
-  def show
-  end
 
   #invoked from paypal
   # GET /orders/new
@@ -45,18 +40,21 @@ class OrdersController < ApplicationController
           @user.update(:activate => true)
           #send welcome message
           @user.welcome_message
+
           #activate subscriptions
           @user.subscriptions.each do |s|
             s.subscription_message_fill
             s.enqueue_first_job
           end
+
+
           format.html { redirect_to new_user_path, notice: 'Thanks for the purchase. Your SMS Subscription has been activated.' }
           format.json { render action: 'show', status: :created, location: @user }
         else
           logger.debug "==========> can't find user based on token"
           @user.terms = false
           flash[:error] = "Payment failed"
-          format.html { redirect_to new_user_path  }
+          format.html { redirect_to new_user_path }
           format.json { render json: @user.errors, status: :unprocessable_entity }
         end
       else
@@ -65,12 +63,60 @@ class OrdersController < ApplicationController
         @user.destroy
         @user = temp_user
         flash[:error] = "Payment failed"
-        format.html { redirect_to new_user_path  }
+        format.html { redirect_to new_user_path }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
 
 
+  end
+
+  #for buy more orders
+  def buy_more
+    @order = Order.new(:express_token => params[:token], :payment_method => "paypal")
+    @user = User.find_by_payment_token(@order.express_token)
+    @order.price = (@user.temp_buy_more.to_f).to_s
+    logger.debug "=========>Amount billed for purchase===>" + @order.price
+    @order.save
+    @user.orders << @order
+
+    respond_to do |format|
+      if @order.purchase
+        logger.debug "======>successful purchase"
+        if @user
+          #activate new subscriptions
+          @user.subscriptions.where(:buy_more => true).each do |s|
+            s.subscription_message_fill
+            s.enqueue_first_job
+
+            #to save from deletion when future subscriptions payment fails
+            s.update :buy_more => false
+          end
+          format.html { redirect_to buy_more_user_path(:id => @user.uuid), notice: 'Thanks for the purchase. Your SMS Subscription has been activated.' }
+        else
+          logger.debug "==========> can't find user based on token"
+          flash[:error] = "Payment failed"
+          format.html { redirect_to buy_more_user_path(:id => @user.uuid) }
+        end
+      else
+        logger.debug "======>failed purchase"
+        #all subscriptions in buy more deleted
+        @user.subscriptions(:buy_more => true).destroy_all
+        flash[:error] = "Payment failed"
+        format.html { redirect_to buy_more_user_path(:id => @user.uuid) }
+      end
+    end
+
+  end
+
+
+  def buy_more_failed
+    @user = User.find_by_payment_token(params[:token])
+    @user.subscriptions(:buy_more => true).destroy_all
+    flash[:error] = "Payment failed"
+    respond_to do |format|
+      format.html { redirect_to buy_more_user_path(:id => @user.uuid) }
+    end
   end
 
   # GET /orders/1/edit

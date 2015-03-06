@@ -25,7 +25,8 @@
               </ul>
             </div>
         <% end %>
-        <h5 class="text-center">Subscriptions</h5>
+        <br>
+        <h5 class="text-center">Buy more subscriptions</h5>
 
         <% sub_counter = 0 %>
         <% @user.subscriptions.each do |sub| %>
@@ -40,7 +41,24 @@
         <% end %>
 
             <p><%= link_to_add_fields "Add More Subscription", f, :subscriptions  %></p>
-            <br><div id="sub_notice"></div>
+        <hr>
+        <h5 class="text-center">Payment</h5>
+        <div class="panel">
+          <%= f.hidden_field :buy_more_price %>
+          <p class="text-center">Price : $ <span id="price_box">2</span> USD</p>
+        </div>
+        <div class="field">
+          <table style="width:100%">
+            <tr>
+              <td><%= f.radio_button :payment, "paypal" %><%= f.label :payment, 'Paypal', :style => "display:inline" %></td>
+            </tr>
+            <tr>
+              <td><%= f.radio_button :payment, "2checkout" %><%= f.label :payment, '2Checkout', :style => "display:inline" %></td>
+            </tr>
+          </table>
+          <%#= f.label :gift  %>
+          <%#= f.collection_radio_buttons :gift, [[false, 'No. It is for me'], [true, 'Yes. I am gifting this service']], :first, :last  ,  :style => "display:inline"%>
+        </div>
 
       </div>
       <div class="row">
@@ -90,6 +108,7 @@
         var new_id = new Date().getTime();
         var regexp = new RegExp("new_" + association, "g")
         $(link).parent().before(content.replace(regexp, new_id));
+        recalculate();
     }
 
     function remove_fields(link) {
@@ -101,7 +120,50 @@
         }
         $(link).prev("input[type=hidden]").val("1");
         $(link).closest("fieldset").hide();
+        recalculate();
     }
+
+
+    function recalculate() {
+
+        total = 0;
+
+        $(' fieldset input[type=radio]:checked').each(function () {
+            if($(this))
+                a = $(this).val();
+//                alert("checked => " + a);
+            if (a) {
+                if (a == 30)
+                    total += <%= PriceConfig.pricing(30) %>;
+                else if (a == 60)
+                    total += <%= PriceConfig.pricing(60) %>;
+                else if (a == 120)
+                    total += <%= PriceConfig.pricing(120) %>;
+            }
+            return total;
+        });
+
+        $(' fieldset:hidden input[type=radio]:checked').each(function () {
+            if($(this))
+                a = $(this).val();
+//                alert("checked => " + a);
+            if (a) {
+                if (a == 30)
+                    total -= <%= PriceConfig.pricing(30) %>;
+                else if (a == 60)
+                    total -= <%= PriceConfig.pricing(60) %>;
+                else if (a == 120)
+                    total -= <%= PriceConfig.pricing(120) %>;
+            }
+            return total;
+        });
+
+        //alert(total)
+        $('#price_box').html(total);
+        $('#user_buy_more_price').val(total);
+        //$('input[name="user[subscriptions_attributes][0][duration]"]:checked', '#new_user').val()
+    }
+
 </script>
 
 

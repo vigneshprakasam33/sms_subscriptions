@@ -19,7 +19,8 @@ class Order < ActiveRecord::Base
   def process_purchase
     if !express_token.blank?
       logger.debug "=======>invoking purchase"
-      EXPRESS_GATEWAY.purchase(self.user.calculate_total_in_cents, express_purchase_options)
+      #in cents
+      EXPRESS_GATEWAY.purchase(self.price.to_f * 100, express_purchase_options)
     end
   end
 
