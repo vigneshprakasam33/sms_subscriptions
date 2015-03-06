@@ -61,6 +61,9 @@ class OrdersController < ApplicationController
         end
       else
         logger.debug "======>failed purchase"
+        temp_user = @user
+        @user.destroy
+        @user = temp_user
         flash[:error] = "Payment failed"
         format.html { redirect_to new_user_path  }
         format.json { render json: @user.errors, status: :unprocessable_entity }
