@@ -1,12 +1,12 @@
 .top_bar_logo {
-    padding-top: 5px;
+    padding-top: 8px;
     padding-left: 10px;
     padding-right: 10px;
 }
 
 .signin_page_logo {
-    padding-right: 5px;
-    padding-top: 15px;
+    /*padding-right: 0px;*/
+    padding-top: 31px;
 }
 
 .login_body {
