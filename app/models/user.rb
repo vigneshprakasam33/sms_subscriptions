@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
       elsif s.duration.to_i == 60
         total += PriceConfig.pricing(60) * 100
       else
-        total += PriceConfig.pricing(120) * 100
+        total += PriceConfig.pricing(90) * 100
       end
     end
     total

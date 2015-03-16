@@ -137,8 +137,8 @@
                     total += <%= PriceConfig.pricing(30) %>;
                 else if (a == 60)
                     total += <%= PriceConfig.pricing(60) %>;
-                else if (a == 120)
-                    total += <%= PriceConfig.pricing(120) %>;
+                else if (a == 90)
+                    total += <%= PriceConfig.pricing(90) %>;
             }
             return total;
         });
@@ -152,8 +152,8 @@
                     total -= <%= PriceConfig.pricing(30) %>;
                 else if (a == 60)
                     total -= <%= PriceConfig.pricing(60) %>;
-                else if (a == 120)
-                    total -= <%= PriceConfig.pricing(120) %>;
+                else if (a == 90)
+                    total -= <%= PriceConfig.pricing(90) %>;
             }
             return total;
         });

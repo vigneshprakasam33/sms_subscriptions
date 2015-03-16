@@ -1,0 +1,22 @@
+<br>
+<br>
+<div class="row">
+  <div class="large-6 large-centered small-9 small-centered columns">
+    <div class="panel text-center">
+      <h3>Pricing</h3>
+    </div>
+    <%= simple_form_for(@pricing , :method => :post , :url => update_pricing_orders_path) do |f| %>
+        <% @pricings.each do |p|  %>
+        <div class="field">
+          <%= p.days.to_s + " days"%>
+          <br>
+          <%= text_field_tag "price_#{p.days}"  , p.price %>
+        </div>
+       <% end  %>
+
+        <div class="actions">
+          <%= f.submit :class => "button success radius" %>
+        </div>
+    <% end %>
+  </div>
+</div>

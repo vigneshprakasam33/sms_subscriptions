@@ -8,6 +8,8 @@ SmsSubscriptions::Application.routes.draw do
       get :express
       get :buy_more
       get :buy_more_failed
+      get :pricing
+      post :update_pricing
     end
   end
 

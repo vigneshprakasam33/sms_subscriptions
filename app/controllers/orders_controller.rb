@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :edit, :update, :destroy]
-  skip_before_filter :require_login, :only => [:express, :index, :new , :buy_more , :buy_more_failed]
+  skip_before_filter :require_login, :only => [:express, :index, :new, :buy_more, :buy_more_failed]
   protect_from_forgery :except => [:express, :new, :index]
   # GET /orders
   # GET /orders.json
@@ -11,6 +11,21 @@ class OrdersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to new_user_path }
     end
+  end
+
+  def pricing
+    @pricing = ""
+    @pricings = PriceConfig.all
+  end
+
+  def update_pricing
+    PriceConfig.find_by_days(30).update(:price => params["price_30"])
+    PriceConfig.find_by_days(60).update(:price => params["price_60"])
+    PriceConfig.find_by_days(90).update(:price => params["price_90"])
+
+    @pricing = ""
+    @pricings = PriceConfig.all
+    render "pricing"
   end
 
   #sample. not used

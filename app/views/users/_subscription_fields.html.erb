@@ -21,11 +21,11 @@
             <td><%= f.radio_button :duration, 60 , :onchange => "recalculate()"%><%= f.label :duration, '60 days', :style => "display:inline" %></td>
           </tr>
           <tr>
-            <td><%= f.radio_button :duration, 120 , :onchange => "recalculate()"%><%= f.label :duration, '120 days', :style => "display:inline" %></td>
+            <td><%= f.radio_button :duration, 90 , :onchange => "recalculate()"%><%= f.label :duration, '90 days', :style => "display:inline" %></td>
           </tr>
         </table>
         <br>
-        <%#= f.collection_radio_buttons :duration, [[30, '30 days'], [60, '60 days'], [120, '120 days']], :first, :last %>
+        <%#= f.collection_radio_buttons :duration, [[30, '30 days'], [60, '60 days'], [90, '90 days']], :first, :last %>
       </div>
   <% else %>
       <div class="field">

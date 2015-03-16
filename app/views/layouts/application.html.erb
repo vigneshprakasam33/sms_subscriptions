@@ -53,6 +53,9 @@
           <% if can? :update, Subscription %>
               <li><%= link_to 'Subscriptions', subscriptions_path %></li>
           <% end %>
+          <% if can? :update, PriceConfig %>
+              <li><%= link_to 'Pricing', pricing_orders_path %></li>
+          <% end %>
       <% else  %>
           <li><%= link_to 'Subscribe', new_user_path %></li>
       <% end %>
