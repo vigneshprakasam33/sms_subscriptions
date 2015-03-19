@@ -17,7 +17,6 @@
       <th>Time zone</th>
       <th></th>
       <th></th>
-      <th></th>
     </tr>
   </thead>
 
@@ -30,7 +29,6 @@
         <td><%= user.password %></td>
         <td><%= user.email %></td>
         <td><%= user.time_zone %></td>
-        <td><%= link_to 'Show', user %></td>
         <td><%= link_to 'Edit', edit_user_path(user) %></td>
         <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

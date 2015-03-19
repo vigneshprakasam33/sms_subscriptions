@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :orders, :dependent => :destroy
   accepts_nested_attributes_for :subscriptions, allow_destroy: true
   accepts_nested_attributes_for :config_messages, allow_destroy: true
-  attr_accessor :terms, :payment , :buy_more_price
+  attr_accessor :terms, :payment , :buy_more_price , :settings_update
 
   validates_presence_of :name, :surname, :phone
   validates_uniqueness_of :phone

@@ -107,16 +107,9 @@ class UsersController < ApplicationController
     @user.temp_buy_more = params[:user][:buy_more_price]
     respond_to do |format|
       if @user.update(user_params)
-        #items = []
-        #@user.subscriptions.where(:buy_more => true).each do |s|
-        #  item = {}
-        #  item[:name] = s.duration.to_s + " days package"
-        #  item[:description] = s.duration.to_s + " days package of sms service"
-        #  item[:amount] = PriceConfig.pricing(s.duration.to_i)
-        #  item[:quantity] = 1
-        #
-        #  items << item
-        #end
+
+        #check if settings update or upgrading for new subscriptions
+        if params[:user][:settings_update].blank?
 
         logger.debug "=========AMOUNT=======>" + (@user.temp_buy_more.to_f * 100).to_s
         response = EXPRESS_GATEWAY.setup_purchase(params[:user][:buy_more_price].to_f * 100,
@@ -132,9 +125,10 @@ class UsersController < ApplicationController
         @user.update(:payment_token => response.token)
         redirect_to EXPRESS_GATEWAY.redirect_url_for(response.token) and return
 
-        #unreachable code
+        else
         format.html { redirect_to edit_user_path(:id => @user.uuid), notice: 'Settings successfully updated.' }
         format.json { head :no_content }
+        end
       else
         format.html { render action: 'buy_more' }
         format.json { render json: @user.errors, status: :unprocessable_entity }

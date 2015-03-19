@@ -74,6 +74,9 @@
         <% if @user.new_record? %>
             <p><%= link_to_add_fields "Add Subscription", f, :subscriptions %></p>
             <!--<br><div id="sub_notice"></div>-->
+        <% else  %>
+        <!--settings update-->
+            <%= f.hidden_field :settings_update , value: true %>
         <% end %>
         <hr>
         <% if @user.new_record? %>
