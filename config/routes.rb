@@ -1,5 +1,7 @@
 SmsSubscriptions::Application.routes.draw do
 
+  resources :supports
+
   resources :subscriptions
 
   resources :orders do

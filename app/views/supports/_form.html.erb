@@ -1,0 +1,42 @@
+<br>
+<div class="row">
+  <div class="large-centered small-centered columns">
+    <div class="panel text-center">
+      <h3>Support</h3>
+    </div>
+    <% if notice %>
+        <div data-alert class="alert-box rounded success">
+          <a href="#" class="close">&times;</a>
+          <%= notice %>
+        </div>
+    <% end %>
+  </div>
+  <div class="large-6 large-centered small-9 small-centered columns">
+
+  <%= form_for(@support) do |f| %>
+  <% if @support.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@support.errors.count, "error") %> prohibited this support from being saved:</h2>
+
+      <ul>
+      <% @support.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email , :placeholder => "your email id" %>
+  </div>
+  <div class="field">
+    <%= f.label :content %><br>
+    <%= f.text_area :content , :placeholder => "Enter your query"%>
+  </div>
+  <div class="actions text-center">
+    <%= f.submit :class => "button success tiny radius" , :value => "Submit"%>
+  </div>
+<% end %>
+  </div>
+</div>
