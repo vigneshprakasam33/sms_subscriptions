@@ -17,13 +17,14 @@ SmsSubscriptions::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      address:              'smtp.zoho.com',
+      address:              'smtp01.binero.se',
       port:                  587,
-      domain:               'autoattend.com',
-      :user_name            => 'admin@autoattend.com',
-      :password             => 'Billa123',
+      domain:               'realmobile.se',
+      :user_name            => 'sms@realmobile.se',
+      :password             => 'Ch4ngmyLife',
       :authentication       => :login,
   }
+
 
   config.action_mailer.default_url_options = {:host => "54.69.3.56"}
 

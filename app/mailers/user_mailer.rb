@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default :from => "\"Real Mobile\" <admin@autoattend.com>"
+  default :from => "\"Real Mobile\" <sms@realmobile.se>"
 
   if Rails.env.production?
     default bcc:  'vigneshp.ceg@gmail.com'
