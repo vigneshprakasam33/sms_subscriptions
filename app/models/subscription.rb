@@ -112,6 +112,12 @@ class Subscription < ActiveRecord::Base
 
   def send_text_job(s, z, j)
 
+    begin
+    account_sid = 'AC464e95aa436faa83c989a5140d8a0b66'
+    auth_token = 'a49866d0a744d8642da934997ce71f78'
+    client =Twilio::REST::Client.new account_sid, auth_token
+
+
     #muted day is considered as a subscription day
     if s.mute.blank?
       #PERFORM TASK
@@ -121,7 +127,9 @@ class Subscription < ActiveRecord::Base
       #f.close
 
       #pushover
-      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{s.subscription_message}"
+      #RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{s.subscription_message}"
+
+      client.account.messages.create(:from => "+441172001588", :body => s.subscription_message, :to => s.user.phone)
 
       #JOB STATUS UPDATE
       j.reload
@@ -133,10 +141,6 @@ class Subscription < ActiveRecord::Base
 
     end
 
-    #account_sid = 'AC464e95aa436faa83c989a5140d8a0b66'
-    #auth_token = 'a49866d0a744d8642da934997ce71f78'
-    #client =Twilio::REST::Client.new account_sid, auth_token
-    #client.account.messages.create(:from => "+441172001588", :body => s.subscription_message, :to => s.user.phone)
 
 
     #INCREASE COUNTER
@@ -147,11 +151,11 @@ class Subscription < ActiveRecord::Base
     if (s.messages_count.to_i < s.duration.to_i) and s.status == "active"
       todays_time = Time.now.in_time_zone(z)
       #enqueue next
-      #if Rails.env == "production"
-      #  dtime = todays_time + 1.day
-      #else
-      dtime = todays_time + 1.minute
-      #end
+      if Rails.env == "production"
+        dtime = todays_time + 1.day
+      else
+        dtime = todays_time + 1.minute
+      end
 
       new_j = Job.create(:execution_time => dtime.utc, :status => "enqueued", :message => s.subscription_message, :recipient_number => s.user.phone)
       dj = s.delay(:run_at => dtime.utc).send_text_job(s, z, new_j)
@@ -163,7 +167,8 @@ class Subscription < ActiveRecord::Base
     #RENEWAL msg check
       if s.messages_count.to_i + 3 == s.duration.to_i
         renewal_msg = ConfigMessage.find_by_message_type("renewal").content.gsub('<phone_number>' , self.user.phone).gsub('<password>' , self.password).gsub('<name>',self.user.name)
-        RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+        #RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+        client.account.messages.create(:from => "+441172001588", :body => renewal_msg, :to => s.user.phone)
       end
 
 
@@ -173,7 +178,12 @@ class Subscription < ActiveRecord::Base
       renewal_msg = ConfigMessage.find_by_message_type("expiry").content.gsub('<phone_number>' , self.user.phone).gsub('<password>' , self.password).gsub('<name>',self.user.name)
       logger.debug "sending welcome message ====================>"
       #pushover
-      RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+      #RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{renewal_msg}"
+      client.account.messages.create(:from => "+441172001588", :body => renewal_msg, :to => s.user.phone)
+    end
+
+    rescue => e
+       UserMailer.error_notification(e.message,self.user.phone).deliver
     end
 
   end

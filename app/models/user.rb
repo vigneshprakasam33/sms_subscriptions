@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :orders, :dependent => :destroy
   accepts_nested_attributes_for :subscriptions, allow_destroy: true
   accepts_nested_attributes_for :config_messages, allow_destroy: true
-  attr_accessor :terms, :payment , :buy_more_price , :settings_update
+  attr_accessor :terms, :payment, :buy_more_price, :settings_update
 
   validates_presence_of :name, :surname, :phone
   validates_uniqueness_of :phone
@@ -51,14 +51,22 @@ class User < ActiveRecord::Base
   end
 
   def welcome_message
-    if self.gift.blank?
-      welcome_msg = ConfigMessage.find_by_message_type("welcome").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
-    else
-      welcome_msg = ConfigMessage.find_by_message_type("welcome_gift").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
+    begin
+      account_sid = 'AC464e95aa436faa83c989a5140d8a0b66'
+      auth_token = 'a49866d0a744d8642da934997ce71f78'
+      client =Twilio::REST::Client.new account_sid, auth_token
+      if self.gift.blank?
+        welcome_msg = ConfigMessage.find_by_message_type("welcome").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
+      else
+        welcome_msg = ConfigMessage.find_by_message_type("welcome_gift").content.gsub('<phone_number>', self.phone).gsub('<password>', self.password).gsub('<name>', self.name)
+      end
+      logger.debug "sending welcome message ====================>"
+      #pushover
+      #RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{welcome_msg}"
+      client.account.messages.create(:from => "+441172001588", :body => welcome_msg, :to => self.phone)
+    rescue => e
+      UserMailer.error_notification(e.message,self.phone).deliver
     end
-    logger.debug "sending welcome message ====================>"
-    #pushover
-    RestClient.post "https://api.pushover.net/1/messages.json", :token => "ayUrGvK4xDvYewE7EFVXJCoMrCKeMx", :user => "nAmrvNBQ74LL9sErFPT3JiH1aquX6x", :device => "gt-i9300", :title => "Daily Dose", :message => "#{welcome_msg}"
   end
 
   def time_zone_updated

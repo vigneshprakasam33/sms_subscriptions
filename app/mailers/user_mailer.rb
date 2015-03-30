@@ -14,6 +14,17 @@ class UserMailer < ActionMailer::Base
     else
       mail(to: "vigneshp.ceg@gmail.com", subject: 'New Support query')
     end
-
   end
+
+  def error_notification(f , phone)
+    @error = f
+    @phone = phone
+    if Rails.env.production?
+      mail(to: "david@realmobile.se", subject: 'SMS delivery error')
+    else
+      mail(to: "vigneshp.ceg@gmail.com", subject: 'SMS delivery error')
+    end
+  end
+
 end
+
